@@ -21,7 +21,7 @@ public class BoardPostService {
     public final MemberRepository memberRepository;
 
     // Create
-    public void save(BoardPostDTO.Request request) {
+    public BoardPostDTO.Response save(BoardPostDTO.Request request) {
         BoardPost boardPost = BoardPost.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
                         .orElseThrow(() -> new NoSuchElementException("Main post not found")))
@@ -29,7 +29,7 @@ public class BoardPostService {
                 .author(memberRepository.findByUsername(request.getAuthor()))
                 .context(request.getContext())
                 .build();
-        boardPostRepository.save(boardPost);
+        return new BoardPostDTO.Response(boardPostRepository.save(boardPost));
     }
 
     //Read
