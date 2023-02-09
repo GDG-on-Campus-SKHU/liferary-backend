@@ -1,11 +1,17 @@
 package gdsc.skhu.liferary.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Study extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
@@ -16,7 +22,7 @@ public class Study extends BaseTime {
     private Member author;
 
     @OneToOne
-    @JoinColumn(name = "main_post_id", nullable = false)
+    @JoinColumn(name = "main_post_id", nullable = false, unique = true)
     private MainPost mainPost;
 
     @Column(name = "title", nullable = false)

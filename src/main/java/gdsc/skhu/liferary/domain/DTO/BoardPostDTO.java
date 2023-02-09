@@ -4,6 +4,7 @@ import gdsc.skhu.liferary.domain.BoardPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,8 @@ public class BoardPostDTO {
     @Setter
     @Schema(name = "BoardPostDTO.Response")
     public static class Response {
+        @Schema(description = "ID")
+        private Long id;
         @Schema(description = "Title")
         private String title;
         @Schema(description = "Nickname")
@@ -38,8 +41,11 @@ public class BoardPostDTO {
         private String context;
         @Schema(description = "Comments")
         private List<CommentDTO.Response> comments;
+        @Schema(description = "Modified Date")
+        private LocalDateTime modifiedDate;
 
         public Response(BoardPost boardPost) {
+            this.id = boardPost.getId();
             this.title = boardPost.getTitle();
             this.nickname = boardPost.getAuthor().getNickname();
             this.context = boardPost.getContext();
@@ -48,6 +54,19 @@ public class BoardPostDTO {
             } else {
                 this.comments = boardPost.getComments().stream().map(CommentDTO.Response::new).collect(Collectors.toList());
             }
+            this.modifiedDate = boardPost.getModifiedDate();
         }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "BoardPostDTO.Update")
+    public static class Update {
+        @Schema(description = "Title", defaultValue = "Modified Title")
+        private String title;
+        @Schema(description = "Context", defaultValue = "Modified Context")
+        private String context;
     }
 }

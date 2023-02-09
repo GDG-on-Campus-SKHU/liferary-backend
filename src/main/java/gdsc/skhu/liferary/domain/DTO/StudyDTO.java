@@ -12,6 +12,7 @@ public class StudyDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(name = "StudyDTO.Request")
     public static class Request {
         @Schema(description = "Main post Id", defaultValue = "1")
         private Long mainPostId;
@@ -24,7 +25,10 @@ public class StudyDTO {
     }
 
     @Getter
+    @Schema(name = "StudyDTO.Response")
     public static class Response {
+        @Schema(description = "ID")
+        private Long id;
         @Schema(description = "Title")
         private String title;
         @Schema(description = "Nickname")
@@ -32,9 +36,22 @@ public class StudyDTO {
         @Schema(description = "Context")
         private String context;
         public Response(Study study) {
+            this.id = study.getId();
             this.title = study.getTitle();
             this.nickname = study.getAuthor().getNickname();
             this.context = study.getContext();
         }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "StudyDTO.Update")
+    public static class Update {
+        @Schema(description = "Title", defaultValue = "Modified Title")
+        private String title;
+        @Schema(description = "Context", defaultValue = "Modified Context")
+        private String context;
     }
 }

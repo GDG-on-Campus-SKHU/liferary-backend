@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public class MainPostDTO {
     @Getter
     @Builder
@@ -29,6 +31,8 @@ public class MainPostDTO {
     @Getter
     @Schema(name = "MainPostDTO.Response")
     public static class Response {
+        @Schema(description = "ID")
+        private Long id;
         @Schema(description = "Title")
         private String title;
         @Schema(description = "Nickname")
@@ -37,16 +41,32 @@ public class MainPostDTO {
         private String category;
         @Schema(description = "Context")
         private String context;
+        @Schema(description = "Modified Date")
+        private LocalDateTime modifiedDate;
 
         public Response(MainPost mainPost) {
+            this.id = mainPost.getId();
             this.title = mainPost.getTitle();
             this.nickname = mainPost.getAuthor().getNickname();
             this.category = mainPost.getCategory();
             this.context = mainPost.getContext();
+            this.modifiedDate = mainPost.getModifiedDate();
         }
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "MainPostDTO.Update")
     public static class Update {
-
+        @Schema(description = "Title", defaultValue = "Modified Title")
+        private String title;
+        @Schema(description = "Category", defaultValue = "exercise")
+        private String category;
+        @Schema(description = "Context", defaultValue = "Modified Context")
+        private String context;
+        @Schema(description = "Video URL", defaultValue = "https://www.youtube.com")
+        private String video;
     }
 }

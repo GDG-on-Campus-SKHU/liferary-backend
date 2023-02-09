@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.controller;
 
-import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.service.MainPostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +60,7 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{pageNumber}")
+    @GetMapping("/page/{pageNumber}")
     public Page<MainPostDTO.Response> findAll(@PathVariable("pageNumber") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return mainPostService.findAll(pageable);
@@ -74,8 +73,19 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<MainPostDTO.Response> update(@RequestBody MainPostDTO.Request request,
+    public ResponseEntity<MainPostDTO.Response> update(@RequestBody MainPostDTO.Update update,
                                                        @PathVariable("id") Long id) {
-        return mainPostService.update(id);
+        return ResponseEntity.ok(mainPostService.update(update, id));
+    }
+
+    // Delete
+    @Operation(summary = "Delete main post", description = "Delete main post")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
+        return mainPostService.delete(id);
     }
 }

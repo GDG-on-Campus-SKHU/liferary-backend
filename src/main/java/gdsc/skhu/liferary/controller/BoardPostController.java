@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardPostController {
     private final BoardPostService boardPostService;
 
+    // Create
     @Operation(summary = "create board posts", description = "Create posts for community board")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -29,14 +32,52 @@ public class BoardPostController {
         return ResponseEntity.ok(boardPostService.save(boardPostDTO));
     }
 
+    // Read
     @Operation(summary = "get board posts by main post id", description = "Read board posts by main post id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{mainPostId}")
-    public Page<BoardPostDTO.Response> findByMainPost(Pageable pageable,
-                                                      @PathVariable("mainPostId") Long mainPostId) {
+    @GetMapping("/{mainPostId}/page/{pageNumber}")
+    public Page<BoardPostDTO.Response> findByMainPost(@PathVariable("mainPostId") Long mainPostId,
+                                                      @PathVariable("pageNumber") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return boardPostService.findByMainPost(pageable, mainPostId);
+    }
+
+    @Operation(summary = "get board posts by main post id", description = "Read board posts by main post id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/{mainPostId}/post/{id}")
+    public BoardPostDTO.Response findById(@PathVariable("mainPostId") Long mainPostId,
+                                          @PathVariable("id") Long id) {
+        return boardPostService.findById(mainPostId, id);
+    }
+
+    // Update
+    @Operation(summary = "Update board post", description = "Update board post")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @PatchMapping("/{mainPostId}/post/{id}")
+    public ResponseEntity<BoardPostDTO.Response> update(@RequestBody BoardPostDTO.Update update,
+                                                       @PathVariable("mainPostId") Long mainPostId,
+                                                       @PathVariable("id") Long id) {
+        return ResponseEntity.ok(boardPostService.update(update, mainPostId, id));
+    }
+
+    // Delete
+    @Operation(summary = "Delete main post", description = "Delete main post")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @DeleteMapping("/{mainPostId}/post/{id}")
+    public ResponseEntity<String> delete(@PathVariable("mainPostId") Long mainPostId,
+                                         @PathVariable("id") Long id) {
+        return boardPostService.delete(mainPostId, id);
     }
 }
