@@ -18,11 +18,11 @@ public class BoardPostDTO {
     public static class Request {
         @Schema(description = "Main post Id", defaultValue = "1")
         private Long mainPostId;
-        @Schema(description = "Board post title", defaultValue = "Test Board Title")
+        @Schema(description = "Title", defaultValue = "Test Board Title")
         private String title;
         @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
         private String author;
-        @Schema(description = "Board post context", defaultValue = "Test Board Context")
+        @Schema(description = "Context", defaultValue = "Test Board Context")
         private String context;
     }
 
@@ -30,9 +30,13 @@ public class BoardPostDTO {
     @Setter
     @Schema(name = "BoardPostDTO.Response")
     public static class Response {
+        @Schema(description = "Title")
         private String title;
+        @Schema(description = "Nickname")
         private String nickname;
+        @Schema(description = "Context")
         private String context;
+        @Schema(description = "Comments")
         private List<CommentDTO.Response> comments;
 
         public Response(BoardPost boardPost) {

@@ -14,24 +14,28 @@ public class MainPostDTO {
     @AllArgsConstructor
     @Schema(name = "MainPostDTO.Request")
     public static class Request {
-        @Schema(description = "Main post title", defaultValue = "Test Title")
+        @Schema(description = "Title", defaultValue = "Test Title")
         private String title;
         @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
         private String author;
         @Schema(description = "Category", defaultValue = "programming")
         private String category;
-        @Schema(description = "Main post context", defaultValue = "Test Context")
+        @Schema(description = "Context", defaultValue = "Test Context")
         private String context;
-        @Schema(description = "Video url", defaultValue = "https://www.youtube.com")
+        @Schema(description = "Video URL", defaultValue = "https://www.youtube.com")
         private String video;
     }
 
     @Getter
     @Schema(name = "MainPostDTO.Response")
     public static class Response {
+        @Schema(description = "Title")
         private String title;
+        @Schema(description = "Nickname")
         private String nickname;
+        @Schema(description = "Category")
         private String category;
+        @Schema(description = "Context")
         private String context;
 
         public Response(MainPost mainPost) {
@@ -40,5 +44,9 @@ public class MainPostDTO {
             this.category = mainPost.getCategory();
             this.context = mainPost.getContext();
         }
+    }
+
+    public static class Update {
+
     }
 }
