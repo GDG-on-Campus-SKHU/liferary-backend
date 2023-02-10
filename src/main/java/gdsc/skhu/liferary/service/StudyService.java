@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.DTO.StudyDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Study;
@@ -8,8 +7,6 @@ import gdsc.skhu.liferary.repository.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import gdsc.skhu.liferary.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
