@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "MainPost", description = "API for main board post")
+@Tag(name = "Comment", description = "API for comment")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")

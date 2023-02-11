@@ -2,6 +2,7 @@ HELP.md
 .gradle
 .env
 .github
+/db/**
 docker-compose.yml
 **/src/main/resources/data.sql
 
