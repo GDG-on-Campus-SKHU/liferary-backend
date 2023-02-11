@@ -1,5 +1,6 @@
 package gdsc.skhu.liferary.domain.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import gdsc.skhu.liferary.domain.MainPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class MainPostDTO {
 
     @Getter
     @Schema(name = "MainPostDTO.Response")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {
         @Schema(description = "ID")
         private Long id;
@@ -41,6 +43,8 @@ public class MainPostDTO {
         private String category;
         @Schema(description = "Context")
         private String context;
+        @Schema(description = "Video URL")
+        private String video;
         @Schema(description = "Modified Date")
         private LocalDateTime modifiedDate;
 
@@ -50,6 +54,7 @@ public class MainPostDTO {
             this.nickname = mainPost.getAuthor().getNickname();
             this.category = mainPost.getCategory();
             this.context = mainPost.getContext();
+            this.video = mainPost.getVideo();
             this.modifiedDate = mainPost.getModifiedDate();
         }
     }
