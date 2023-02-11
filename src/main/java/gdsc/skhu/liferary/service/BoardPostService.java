@@ -2,7 +2,6 @@ package gdsc.skhu.liferary.service;
 
 import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
-import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.repository.BoardPostRepository;
 import gdsc.skhu.liferary.repository.MainPostRepository;
