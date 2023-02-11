@@ -1,6 +1,6 @@
 HELP.md
 .gradle
-data.sql
+**/src/main/resources/data.sql
 
 build/
 !gradle/wrapper/gradle-wrapper.jar
