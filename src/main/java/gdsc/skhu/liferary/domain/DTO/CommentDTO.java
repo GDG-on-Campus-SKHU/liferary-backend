@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,8 @@ public class CommentDTO {
         private String context;
         @Schema(description = "Child comments")
         private List<Response> childComments;
+        @Schema(description = "Modified Date")
+        private LocalDateTime modifiedDate;
 
         public Response(Comment comment) {
             this.id = comment.getId();
@@ -45,6 +48,7 @@ public class CommentDTO {
             this.context = comment.getContext();
             this.childComments = comment.getChildComments().stream()
                     .map(CommentDTO.Response::new).collect(Collectors.toList());
+            this.modifiedDate = comment.getModifiedDate();
         }
     }
 

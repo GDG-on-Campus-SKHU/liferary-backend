@@ -1,5 +1,7 @@
 HELP.md
 .gradle
+data.sql
+
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

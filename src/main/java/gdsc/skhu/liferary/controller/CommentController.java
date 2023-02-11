@@ -5,6 +5,7 @@ import gdsc.skhu.liferary.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "MainPost", description = "API for main board post")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")
-
 public class CommentController {
     private final CommentService commentService;
 

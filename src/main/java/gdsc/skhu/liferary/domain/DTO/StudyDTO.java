@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class StudyDTO {
     @Getter
     @Builder
@@ -35,11 +38,14 @@ public class StudyDTO {
         private String nickname;
         @Schema(description = "Context")
         private String context;
+        @Schema(description = "Modified Date")
+        private LocalDateTime modifiedDate;
         public Response(Study study) {
             this.id = study.getId();
             this.title = study.getTitle();
             this.nickname = study.getAuthor().getNickname();
             this.context = study.getContext();
+            this.modifiedDate = study.getModifiedDate();
         }
     }
 
