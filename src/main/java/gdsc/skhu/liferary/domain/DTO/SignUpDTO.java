@@ -1,15 +1,17 @@
 package gdsc.skhu.liferary.domain.DTO;
 
 import gdsc.skhu.liferary.domain.Member;
-import gdsc.skhu.liferary.domain.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class SignUpDTO {
 
     @NotBlank(message = "이메일을 입력해주세요.")
@@ -37,7 +39,6 @@ public class SignUpDTO {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .role(Role.USER)
                 .build();
     }
 }
