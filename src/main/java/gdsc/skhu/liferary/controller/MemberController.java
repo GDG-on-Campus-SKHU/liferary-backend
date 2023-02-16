@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Map;
 
-@Tag(name = "MainPost", description = "API for main board post")
+@Tag(name = "Member", description = "API for authentication and authorization")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
