@@ -27,7 +27,8 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .boardPost(boardPostRepository.findById(request.getBoardPostId())
                         .orElseThrow(() -> new NoSuchElementException("Board post not found")))
-                .writer(memberRepository.findByUsername(request.getWriter()))
+                .writer(memberRepository.findByEmail(request.getWriter())
+                        .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .childComments(new ArrayList<>())
                 .build();
@@ -40,7 +41,8 @@ public class CommentService {
                         .orElseThrow(() -> new NoSuchElementException("Board post not found")))
                 .parentComment(commentRepository.findById(reply.getParentCommentId())
                         .orElseThrow(() -> new NoSuchElementException("Comment not found")))
-                .writer(memberRepository.findByUsername(reply.getWriter()))
+                .writer(memberRepository.findByEmail(reply.getWriter())
+                        .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(reply.getContext())
                 .childComments(new ArrayList<>())
                 .build();
@@ -68,7 +70,8 @@ public class CommentService {
 
     //Update
     public CommentDTO.Response update(CommentDTO.Update update, Long boardPostId, Long id) {
-        boardPostRepository.findById(boardPostId).orElseThrow(() -> new NoSuchElementException("Board post not found"));
+        boardPostRepository.findById(boardPostId)
+                .orElseThrow(() -> new NoSuchElementException("Board post not found"));
         Comment oldComment = this.findById(id);
         Comment newComment = Comment.builder()
                 .id(id)

@@ -23,7 +23,8 @@ public class MainPostService {
     public MainPostDTO.Response save(MainPostDTO.Request request) {
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
-                .author(memberRepository.findByUsername(request.getAuthor()))
+                .author(memberRepository.findByEmail(request.getAuthor())
+                        .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .category(request.getCategory())
                 .context(request.getContext())
                 .video(request.getVideo())

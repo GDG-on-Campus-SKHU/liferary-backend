@@ -26,7 +26,8 @@ public class StudyService {
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
                         .orElseThrow(() -> new NoSuchElementException("Main post not found")))
                 .title(request.getTitle())
-                .author(memberRepository.findByUsername(request.getAuthor()))
+                .author(memberRepository.findByEmail(request.getAuthor())
+                        .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .build();
         return new StudyDTO.Response(studyRepository.save(study));
