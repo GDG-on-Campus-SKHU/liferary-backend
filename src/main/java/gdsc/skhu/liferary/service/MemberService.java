@@ -1,7 +1,6 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.DTO.LoginDTO;
-import gdsc.skhu.liferary.domain.DTO.SignUpDTO;
+import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.jwt.TokenProvider;
@@ -16,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
@@ -29,7 +28,7 @@ public class MemberService {
 
 
     @Transactional
-    public Long signup(SignUpDTO signUpRequestDTO) {
+    public MemberDTO.Response signup(MemberDTO.@Valid SignUp signUpRequestDTO) {
         if (memberRepository.findByEmail(signUpRequestDTO.getEmail()).isPresent()) {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         }
@@ -45,7 +44,8 @@ public class MemberService {
                 .password(passwordEncoder.encode(signUpRequestDTO.getPassword()))
                 .roles(roles).build());
 
-        return member.getId();
+        return new MemberDTO.Response(memberRepository.findById(member.getId())
+                .orElseThrow(() -> new NoSuchElementException("Member not found")));
     }
 
 
@@ -64,7 +64,7 @@ public class MemberService {
 
     //email 중복 확인
     @Transactional(readOnly = true)
-    public void checkEmailDuplication(SignUpDTO dto) {
+    public void checkEmailDuplication(MemberDTO.@Valid SignUp dto) {
         boolean emailDuplicate = memberRepository.existsByEmail(dto.toEntity().getEmail());
         if (emailDuplicate) {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
@@ -74,12 +74,8 @@ public class MemberService {
     @Transactional
     public TokenDTO login(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        TokenDTO tokenDTO = tokenProvider.createToken(authentication);
-
-        return tokenDTO;
+        return tokenProvider.createToken(authentication);
     }
     @Transactional
     public void withdraw(Long id) {
@@ -89,10 +85,10 @@ public class MemberService {
 
     //회원 정보 조회
     @Transactional(readOnly = true)
-    public LoginDTO findById(Long id) {
+    public MemberDTO.Login findById(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(()-> new NoSuchElementException("Not Found Member"));
-        return LoginDTO.builder()
+                .orElseThrow(()-> new NoSuchElementException("Member not found"));
+        return MemberDTO.Login.builder()
                 .email(member.getEmail())
                 .password(member.getPassword())
                 .build();

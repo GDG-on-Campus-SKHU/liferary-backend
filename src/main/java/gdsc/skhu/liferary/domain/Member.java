@@ -32,11 +32,9 @@ public class Member implements UserDetails {      // UserDetails는 Spring Secur
     @Column(nullable = false, name = "password")
     private String password;
 
-
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();     // 권한 목록
-
 
     // 권한 목록 세팅
     @Override
