@@ -21,8 +21,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final TokenProvider tokenProvider;
+    private static final String[] PERMITTED_URLS = {
+            /* Swagger v2 */
+            "/v2/api-docs",
+            "/v2/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            /* Swagger v3 */
+            "/api-docs/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            /* Login API */
+            "/api/member/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,11 +48,10 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/member/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .antMatchers(PERMITTED_URLS).permitAll()
 //                .antMatchers("api/user/**").hasAnyRole("USER", "ADMIN")
 //                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
-//                .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
