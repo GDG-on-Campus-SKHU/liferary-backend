@@ -2,6 +2,7 @@ package gdsc.skhu.liferary.controller;
 
 import gdsc.skhu.liferary.domain.DTO.LoginDTO;
 import gdsc.skhu.liferary.domain.DTO.SignUpDTO;
+import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class SignUpController {
+@RequestMapping("/api/member")
+public class MemberController {
+
     private final MemberService memberService;
 
+
+    //create
     @PostMapping("/sign-up")
     public String signup(@Valid @RequestBody SignUpDTO signUpDTO, Errors errors, Model model) {
 
@@ -42,7 +47,15 @@ public class SignUpController {
         return "redirect:/login";
     }
 
-    @DeleteMapping("/member/{id}")
+    @PostMapping("/login")
+    public TokenDTO login(@RequestBody LoginDTO LoginRequestDto) {
+        String email = LoginRequestDto.getEmail();
+        String password = LoginRequestDto.getPassword();
+        TokenDTO tokenDTO = memberService.login(email, password);
+        return tokenDTO;
+    }
+
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(Principal principal, @PathVariable Long id) {
         LoginDTO loginDTO = memberService.findById(id);
         if(principal.getName().equals(loginDTO.getEmail())) {
