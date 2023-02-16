@@ -23,13 +23,13 @@ public class Member implements UserDetails {      // UserDetails는 Spring Secur
     @Column(nullable = false)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "email")
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "nickname")
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "password")
     private String password;
 
 

@@ -1,4 +1,4 @@
-package gdsc.skhu.liferary.config;
+package gdsc.skhu.liferary.configure;
 
 import gdsc.skhu.liferary.jwt.JwtFilter;
 import gdsc.skhu.liferary.jwt.TokenProvider;
@@ -31,10 +31,11 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/sign-up").permitAll()
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/member/**").permitAll()
+//                .antMatchers("api/user/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
+//                .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();

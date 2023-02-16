@@ -1,4 +1,4 @@
-package gdsc.skhu.liferary.config;
+package gdsc.skhu.liferary.configure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
