@@ -1,5 +1,11 @@
 HELP.md
 .gradle
+.env
+.github
+/db/**
+docker-compose.yml
+**/src/main/resources/data.sql
+
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

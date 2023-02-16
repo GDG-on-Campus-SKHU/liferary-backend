@@ -47,7 +47,7 @@ public class StudyController {
     })
     @PatchMapping("/{mainPostId}")
     public ResponseEntity<StudyDTO.Response> update(@RequestBody StudyDTO.Update update,
-                                                    @PathVariable("mainPostId") Long mainPostId) {
+                                                        @PathVariable("mainPostId") Long mainPostId) {
         return ResponseEntity.ok(studyService.update(update, mainPostId));
     }
 

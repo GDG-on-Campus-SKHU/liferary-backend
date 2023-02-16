@@ -64,8 +64,8 @@ public class BoardPostController {
     })
     @PatchMapping("/{mainPostId}/post/{id}")
     public ResponseEntity<BoardPostDTO.Response> update(@RequestBody BoardPostDTO.Update update,
-                                                        @PathVariable("mainPostId") Long mainPostId,
-                                                        @PathVariable("id") Long id) {
+                                                       @PathVariable("mainPostId") Long mainPostId,
+                                                       @PathVariable("id") Long id) {
         return ResponseEntity.ok(boardPostService.update(update, mainPostId, id));
     }
 
