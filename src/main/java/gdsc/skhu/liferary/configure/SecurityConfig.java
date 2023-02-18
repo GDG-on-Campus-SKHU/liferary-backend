@@ -1,9 +1,11 @@
 package gdsc.skhu.liferary.configure;
 
 
+import gdsc.skhu.liferary.handler.OAuth2SuccessHandler;
 import gdsc.skhu.liferary.jwt.JwtFilter;
 import gdsc.skhu.liferary.jwt.TokenProvider;
 
+import gdsc.skhu.liferary.service.Oauth2MemberSerivce;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
+    private final Oauth2MemberSerivce oauth2MemberSerivce;
+    private final OAuth2SuccessHandler successHandler;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -53,7 +57,12 @@ public class SecurityConfig {
 //                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login()
+                .successHandler(successHandler)
+                .userInfoEndpoint()
+                .userService(oauth2MemberSerivce);
+        http.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
