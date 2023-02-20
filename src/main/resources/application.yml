@@ -18,6 +18,16 @@ spring:
   sql:
     init:
       mode: always
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_CLIENT_ID}
+            client-secret: ${OAUTH_CLIENT_PASSWORD}
+            scope:
+              - profile
+              - email
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

@@ -1,7 +1,6 @@
 package gdsc.skhu.liferary.domain.DTO;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -9,7 +8,6 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 public class MemberDTO {
     @Getter
@@ -80,5 +78,17 @@ public class MemberDTO {
             this.email = member.getEmail();
             this.nickname = member.getNickname();
         }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "MemberDTO.OAuth2")
+    public static class OAuth2 {
+        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
+        private String email;
+        @Schema(description = "Nickname", defaultValue = "LiferaryGood")
+        private String nickname;
     }
 }
