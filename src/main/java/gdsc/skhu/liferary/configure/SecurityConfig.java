@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.configure;
 
-
 import gdsc.skhu.liferary.handler.OAuth2SuccessHandler;
 import gdsc.skhu.liferary.jwt.JwtFilter;
 import gdsc.skhu.liferary.jwt.TokenProvider;
@@ -17,6 +16,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
@@ -25,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final Oauth2MemberSerivce oauth2MemberSerivce;
-    private final OAuth2SuccessHandler successHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -41,7 +42,9 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             /* Login API */
-            "/api/member/**"
+            "/api/member/**",
+            /* Static objects */
+            "/favicon.ico"
     };
 
     @Bean
@@ -59,9 +62,11 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
-                .successHandler(successHandler)
+                .defaultSuccessUrl("/api/oauth2/token")
+                .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint()
                 .userService(oauth2MemberSerivce);
+
         http.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -69,6 +74,16 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://front-server.com");
+            }
+        };
     }
 
 }
