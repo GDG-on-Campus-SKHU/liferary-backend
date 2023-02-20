@@ -33,7 +33,7 @@ public class Oauth2MemberSerivce implements OAuth2UserService<OAuth2UserRequest,
 
         /* OAuth2UserService */
         OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(registrationId, usernameAttributeName, oAuth2User.getAttributes());
-        Member member = this.save(oAuth2Attribute);
+        Member member = save(oAuth2Attribute);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getRoles().get(0))),
@@ -43,7 +43,8 @@ public class Oauth2MemberSerivce implements OAuth2UserService<OAuth2UserRequest,
     }
 
     private Member save(OAuth2Attribute attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail()).orElse(attributes.toEntity());
+        Member member = memberRepository.findByEmail(attributes.getEmail())
+                .orElse(attributes.toEntity());
         return memberRepository.save(member);
     }
 }
