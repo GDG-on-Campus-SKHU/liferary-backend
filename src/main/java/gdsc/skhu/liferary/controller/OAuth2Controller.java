@@ -28,8 +28,7 @@ public class OAuth2Controller {
     })
     @GetMapping("/token")
     public ResponseEntity<TokenDTO> token(@AuthenticationPrincipal OAuth2User oAuth2User) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("authentication = " + authentication);
+        System.out.println("authentication = " + oAuth2User.getAttributes());
         ResponseEntity<TokenDTO> response =  ResponseEntity.ok(tokenProvider.createOAuthToken(oAuth2User));
         return response;
     }

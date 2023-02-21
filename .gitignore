@@ -5,7 +5,7 @@ HELP.md
 /db/**
 docker-compose.yml
 **/src/main/resources/data.sql
-firebasekey.json
+**/src/main/resources/firebasekey.json
 
 build/
 
