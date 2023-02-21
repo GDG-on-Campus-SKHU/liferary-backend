@@ -67,11 +67,11 @@ public class SecurityConfig {
                     .antMatchers(PERMITTED_URLS).permitAll()
 //                  .antMatchers("api/user/**").hasAnyRole("USER", "ADMIN")
 //                  .antMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
-                .and()
-                .oauth2Login()
-                    .userInfoEndpoint()
-                    .userService(oauth2MemberSerivce);
+                    .anyRequest().authenticated();
+//                .and()
+//                .oauth2Login()
+//                    .userInfoEndpoint()
+//                    .userService(oauth2MemberSerivce);
 
         http.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
