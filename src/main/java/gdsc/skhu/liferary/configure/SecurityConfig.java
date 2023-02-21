@@ -1,7 +1,5 @@
 package gdsc.skhu.liferary.configure;
 
-
-import gdsc.skhu.liferary.handler.OAuth2SuccessHandler;
 import gdsc.skhu.liferary.jwt.JwtFilter;
 import gdsc.skhu.liferary.jwt.TokenProvider;
 
@@ -25,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final Oauth2MemberSerivce oauth2MemberSerivce;
-    private final OAuth2SuccessHandler successHandler;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -41,7 +38,9 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             /* Login API */
-            "/api/member/**"
+            "/api/member/**",
+            /* Static objects */
+            "/favicon.ico"
     };
 
     @Bean
@@ -49,7 +48,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
                 .authorizeRequests()
                 .antMatchers(PERMITTED_URLS).permitAll()
@@ -59,9 +58,10 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
-                .successHandler(successHandler)
+                .defaultSuccessUrl("/main")
                 .userInfoEndpoint()
                 .userService(oauth2MemberSerivce);
+
         http.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

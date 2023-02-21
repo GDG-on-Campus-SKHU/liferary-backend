@@ -6,6 +6,7 @@ import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.jwt.TokenProvider;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -93,6 +94,13 @@ public class MemberService {
                 .password(member.getPassword())
                 .build();
     }
+
+    public MemberDTO.Response findByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new NoSuchElementException("Member not found"));
+        return new MemberDTO.Response(member);
+    }
+
 //    @Transactional
 //    public void withdraw(String checkPassword) throws Exception {
 //        Member member = memberRepository.findById(SecurityUtil.getLoginUsername()).orElseThrow(() -> new Exception("회원이 존재하지 않습니다"));

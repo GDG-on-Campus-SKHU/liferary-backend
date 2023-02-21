@@ -1,30 +1,35 @@
 package gdsc.skhu.liferary.controller;
 
+import gdsc.skhu.liferary.domain.DTO.TokenDTO;
+import gdsc.skhu.liferary.jwt.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-
-@Tag(name = "Member", description = "API for authentication and authorization")
+@Tag(name = "OAuth2", description = "API for authentication and authorization")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/oauth")
+@RequestMapping("/api/oauth2")
 public class OAuth2Controller {
-    @Operation(summary = "oauth login", description = "Login with OAuth2 Google")
+    private final TokenProvider tokenProvider;
+
+    @Operation(summary = "oauth2 token", description = "Login with Google OAuth2")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/login")
-    public void OAuth2Login(HttpServletResponse response) throws IOException {
-        response.sendRedirect("http://localhost:8080/oauth2/authroization/google");
+    @GetMapping("/token")
+    public ResponseEntity<TokenDTO> token(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        System.out.println("authentication = " + oAuth2User.getAttributes());
+        ResponseEntity<TokenDTO> response =  ResponseEntity.ok(tokenProvider.createOAuthToken(oAuth2User));
+        return response;
     }
 }
