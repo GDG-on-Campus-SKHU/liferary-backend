@@ -55,23 +55,23 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
+                .formLogin().disable()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(PERMITTED_URLS).permitAll()
-//                .antMatchers("api/user/**").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                    .antMatchers(PERMITTED_URLS).permitAll()
+//                  .antMatchers("api/user/**").hasAnyRole("USER", "ADMIN")
+//                  .antMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
-//                .defaultSuccessUrl("/main")
-                .userInfoEndpoint()
-                .userService(oauth2MemberSerivce);
+                    .userInfoEndpoint()
+                    .userService(oauth2MemberSerivce);
 
         http.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -93,6 +93,7 @@ public class SecurityConfig {
                 HttpMethod.DELETE.name()
         ));
         configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
