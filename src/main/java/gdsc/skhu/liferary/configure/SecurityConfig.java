@@ -115,6 +115,7 @@ public class SecurityConfig {
                         "/api-docs/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/api/member/**");
+                        "/api/member/**")
+                .antMatchers(HttpMethod.POST, "/api/firebase/login");
     }
 }

@@ -61,23 +61,6 @@ public class MemberController {
         return memberService.login(email, password);
     }
 
-    @Operation(summary = "firebase login", description = "Login with Firebase")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "400", description = "Bad Request")
-    })
-    @PostMapping("/firebase/login")
-    public MemberDTO.Response firebaseLogin(ServletRequest request) {
-        return memberService.firebaseLogin(request);
-    }
-
-    // Read
-    @GetMapping("/info")
-    public MemberDTO.Response getUserInfo(Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
-        return memberService.findByEmail(currentUser.getUsername());
-    }
-
     @Operation(summary = "delete member", description = "Delete member")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),

@@ -86,12 +86,13 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDTO.Response firebaseLogin(ServletRequest request) {
+    public MemberDTO.Response login(ServletRequest request) {
         String token;
         FirebaseToken firebaseToken;
-
+        request = (HttpServletRequest) request;
         try {
-            token = tokenProvider.resolveToken((HttpServletRequest) request);
+            token = ((HttpServletRequest) request).getHeader("Authorization");
+            System.out.println("token = " + token);
             firebaseToken = firebaseAuth.verifyIdToken(token);
         } catch (IllegalArgumentException | FirebaseAuthException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
