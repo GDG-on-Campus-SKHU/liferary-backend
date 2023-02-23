@@ -1,16 +1,20 @@
 package gdsc.skhu.liferary.configure;
 
-import gdsc.skhu.liferary.jwt.JwtFilter;
-import gdsc.skhu.liferary.jwt.TokenProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import gdsc.skhu.liferary.token.FirebaseFilter;
+import gdsc.skhu.liferary.token.JwtFilter;
+import gdsc.skhu.liferary.token.TokenProvider;
 
-import gdsc.skhu.liferary.service.Oauth2MemberSerivce;
+import gdsc.skhu.liferary.service.TokenUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +25,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -29,8 +32,9 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final TokenUserDetailsService tokenUserDetailsService;
     private final TokenProvider tokenProvider;
-    private final Oauth2MemberSerivce oauth2MemberSerivce;
+    private final FirebaseAuth firebaseAuth;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -65,15 +69,11 @@ public class SecurityConfig {
                 .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .antMatchers(PERMITTED_URLS).permitAll()
-//                  .antMatchers("api/user/**").hasAnyRole("USER", "ADMIN")
-//                  .antMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated();
-//                .and()
-//                .oauth2Login()
-//                    .userInfoEndpoint()
-//                    .userService(oauth2MemberSerivce);
 
-        http.addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, firebaseAuth), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider), FirebaseFilter.class);
         return http.build();
     }
 
@@ -98,5 +98,24 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .antMatchers("/favicon.ico")
+                .antMatchers("/v2/api-docs",
+                        "/v2/api-docs/**",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/api-docs/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/api/member/**")
+                .antMatchers(HttpMethod.POST, "/api/firebase/login");
     }
 }

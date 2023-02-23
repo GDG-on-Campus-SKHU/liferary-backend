@@ -1,4 +1,4 @@
-package gdsc.skhu.liferary.jwt;
+package gdsc.skhu.liferary.token;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
