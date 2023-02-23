@@ -14,7 +14,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,31 +63,6 @@ public class TokenProvider {
                 .build();
     }
 
-    public TokenDTO createOAuthToken(OAuth2User oAuth2User) {
-        String authorities = oAuth2User.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        long now = (new Date()).getTime();
-        Date tokenExpiredTime = new Date(now + validityTime);
-        String accessToken = Jwts.builder()
-                .setSubject(oAuth2User.getName())
-                .claim("auth", authorities)
-                .setExpiration(tokenExpiredTime)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        String refreshToken = Jwts.builder()
-                .setExpiration(tokenExpiredTime)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        return TokenDTO.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
     //복호화해서 토큰에 들어있는 정보 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
@@ -126,5 +103,13 @@ public class TokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
