@@ -1,12 +1,15 @@
 package gdsc.skhu.liferary.service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.domain.Member;
-import gdsc.skhu.liferary.jwt.TokenProvider;
+import gdsc.skhu.liferary.token.TokenProvider;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -15,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -26,7 +32,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final FirebaseAuth firebaseAuth;
 
     @Transactional
     public MemberDTO.Response signup(MemberDTO.@Valid SignUp signUpRequestDTO) {
@@ -77,6 +83,29 @@ public class MemberService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         return tokenProvider.createToken(authentication);
+    }
+
+    @Transactional
+    public MemberDTO.Response login(ServletRequest request) {
+        String token;
+        FirebaseToken firebaseToken;
+        request = (HttpServletRequest) request;
+        try {
+            token = ((HttpServletRequest) request).getHeader("Authorization");
+            System.out.println("token = " + token);
+            firebaseToken = firebaseAuth.verifyIdToken(token);
+        } catch (IllegalArgumentException | FirebaseAuthException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "{\"code\":\"INVALID_TOKEN\", \"message\":\"" + e.getMessage() + "\"}");
+        }
+
+        String password = passwordEncoder.encode(UUID.randomUUID().toString());
+        return signup(MemberDTO.SignUp.builder()
+                .email(firebaseToken.getUid())
+                .nickname(firebaseToken.getName())
+                .password(password)
+                .checkedPassword(password)
+                .build());
     }
     @Transactional
     public void withdraw(Long id) {

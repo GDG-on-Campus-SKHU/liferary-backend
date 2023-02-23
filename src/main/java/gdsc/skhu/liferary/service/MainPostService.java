@@ -9,8 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.NoSuchElementException;
 
 @Service
@@ -20,10 +22,11 @@ public class MainPostService {
     private final MainPostRepository mainPostRepository;
 
     // Create
-    public MainPostDTO.Response save(MainPostDTO.Request request) {
+    public MainPostDTO.Response save(Principal principal, MainPostDTO.Request request) {
+        System.out.println(principal.getName());
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
-                .author(memberRepository.findByEmail(request.getAuthor())
+                .author(memberRepository.findByEmail(principal.getName())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .category(request.getCategory())
                 .context(request.getContext())
