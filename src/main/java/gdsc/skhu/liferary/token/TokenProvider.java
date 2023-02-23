@@ -1,4 +1,4 @@
-package gdsc.skhu.liferary.jwt;
+package gdsc.skhu.liferary.token;
 
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import io.jsonwebtoken.*;
@@ -12,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

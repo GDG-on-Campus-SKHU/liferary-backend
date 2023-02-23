@@ -10,10 +10,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
@@ -56,6 +59,23 @@ public class MemberController {
         String email = LoginRequestDto.getEmail();
         String password = LoginRequestDto.getPassword();
         return memberService.login(email, password);
+    }
+
+    @Operation(summary = "firebase login", description = "Login with Firebase")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @PostMapping("/firebase/login")
+    public MemberDTO.Response firebaseLogin(ServletRequest request) {
+        return memberService.firebaseLogin(request);
+    }
+
+    // Read
+    @GetMapping("/info")
+    public MemberDTO.Response getUserInfo(Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        return memberService.findByEmail(currentUser.getUsername());
     }
 
     @Operation(summary = "delete member", description = "Delete member")
