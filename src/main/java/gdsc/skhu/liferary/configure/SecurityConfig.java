@@ -33,7 +33,6 @@ import java.util.List;
 public class SecurityConfig {
     private final TokenUserDetailsService tokenUserDetailsService;
     private final TokenProvider tokenProvider;
-    private final FirebaseAuth firebaseAuth;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -50,6 +49,7 @@ public class SecurityConfig {
             "/swagger-ui/**",
             /* Login API */
             "/api/member/**",
+            "/api/firebase/**",
             /* Static objects */
             "/favicon.ico"
     };
@@ -80,6 +80,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://api-liferary.duckdns.org");
         configuration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
