@@ -23,7 +23,6 @@ public class MainPostService {
 
     // Create
     public MainPostDTO.Response save(Principal principal, MainPostDTO.Request request) {
-        System.out.println(principal.getName());
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
                 .author(memberRepository.findByEmail(principal.getName())

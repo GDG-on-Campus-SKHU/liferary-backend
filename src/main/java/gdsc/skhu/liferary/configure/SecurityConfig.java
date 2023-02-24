@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.configure;
 
-import com.google.firebase.auth.FirebaseAuth;
 import gdsc.skhu.liferary.token.FirebaseFilter;
 import gdsc.skhu.liferary.token.JwtFilter;
 import gdsc.skhu.liferary.token.TokenProvider;
@@ -15,8 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -33,7 +30,6 @@ import java.util.List;
 public class SecurityConfig {
     private final TokenUserDetailsService tokenUserDetailsService;
     private final TokenProvider tokenProvider;
-    private final FirebaseAuth firebaseAuth;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -50,6 +46,7 @@ public class SecurityConfig {
             "/swagger-ui/**",
             /* Login API */
             "/api/member/**",
+            "/api/firebase/**",
             /* Static objects */
             "/favicon.ico"
     };
@@ -71,8 +68,8 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
 
         http
-                .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, tokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtFilter(tokenProvider), FirebaseFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, tokenProvider), JwtFilter.class);
         return http.build();
     }
 
@@ -80,6 +77,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://api-liferary.duckdns.org");
         configuration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
