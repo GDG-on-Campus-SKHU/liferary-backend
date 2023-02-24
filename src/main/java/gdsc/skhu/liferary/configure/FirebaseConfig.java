@@ -18,6 +18,7 @@ public class FirebaseConfig {
     private String secretKeyPath;
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
+        System.out.println("System.getProperty(\"user.dir\") = " + System.getProperty("user.dir"));
         FileInputStream serviceAccount = new FileInputStream(ResourceUtils
                 .getFile(secretKeyPath));
         FirebaseOptions options = FirebaseOptions.builder()
