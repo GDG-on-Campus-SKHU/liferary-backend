@@ -1,17 +1,23 @@
 package gdsc.skhu.liferary.service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,13 +44,7 @@ public class TokenUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-    public MemberDTO.Response save(FirebaseToken firebaseToken) {
-        String password = UUID.randomUUID().toString();
-        return memberService.signup(MemberDTO.SignUp.builder()
-                .email(firebaseToken.getEmail())
-                .nickname(firebaseToken.getName())
-                .password(password)
-                .checkedPassword(password)
-                .build());
+    public MemberDTO.Response saveUser(FirebaseToken firebaseToken) {
+        return memberService.login(firebaseToken);
     }
 }

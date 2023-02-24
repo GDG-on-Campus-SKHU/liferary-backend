@@ -32,7 +32,6 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final FirebaseAuth firebaseAuth;
 
     @Transactional
     public MemberDTO.Response signup(MemberDTO.@Valid SignUp signUpRequestDTO) {
@@ -86,24 +85,21 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDTO.Response login(ServletRequest request) {
-        String token;
-        FirebaseToken firebaseToken;
-        try {
-            token = ((HttpServletRequest) request).getHeader("Authorization");
-            firebaseToken = firebaseAuth.verifyIdToken(token);
-        } catch (IllegalArgumentException | FirebaseAuthException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    public MemberDTO.Response login(FirebaseToken firebaseToken) {
+        if(memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
+            return new MemberDTO.Response(memberRepository.findByEmail(firebaseToken.getEmail())
+                    .orElseThrow(() -> new NoSuchElementException("Member not found")));
         }
 
         String password = passwordEncoder.encode(UUID.randomUUID().toString());
         return signup(MemberDTO.SignUp.builder()
-                .email(firebaseToken.getUid())
+                .email(firebaseToken.getEmail())
                 .nickname(firebaseToken.getName())
                 .password(password)
                 .checkedPassword(password)
                 .build());
     }
+
     @Transactional
     public void withdraw(Long id) {
         memberRepository.deleteById(id);

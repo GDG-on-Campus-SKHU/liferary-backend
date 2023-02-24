@@ -1,11 +1,16 @@
 package gdsc.skhu.liferary.token;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,7 +19,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
@@ -27,13 +34,16 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     private final Key key;
     private final long validityTime;
+    private final FirebaseAuth firebaseAuth;
 
     public TokenProvider(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.token-validity-in-milliseconds}") long validityTime) {
+            @Value("${jwt.token-validity-in-milliseconds}") long validityTime,
+            FirebaseAuth firebaseAuth) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.validityTime = validityTime;
+        this.firebaseAuth = firebaseAuth;
     }
     //token 생성
     public TokenDTO createToken(Authentication authentication) {
@@ -110,5 +120,17 @@ public class TokenProvider {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    public FirebaseToken getFirebaseToken(ServletRequest request) {
+        String token;
+        FirebaseToken firebaseToken;
+        try {
+            token = resolveToken((HttpServletRequest) request);
+            firebaseToken = firebaseAuth.verifyIdToken(token);
+        } catch (IllegalArgumentException | FirebaseAuthException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        return firebaseToken;
     }
 }

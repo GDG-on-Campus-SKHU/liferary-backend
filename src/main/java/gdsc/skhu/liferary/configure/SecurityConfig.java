@@ -71,7 +71,7 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
 
         http
-                .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, firebaseAuth), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtFilter(tokenProvider), FirebaseFilter.class);
         return http.build();
     }
