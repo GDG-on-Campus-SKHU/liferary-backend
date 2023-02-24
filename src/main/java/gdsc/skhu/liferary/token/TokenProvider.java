@@ -3,6 +3,7 @@ package gdsc.skhu.liferary.token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.AccessTokenValidationException;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -129,7 +130,7 @@ public class TokenProvider {
             token = resolveToken((HttpServletRequest) request);
             firebaseToken = firebaseAuth.verifyIdToken(token);
         } catch (IllegalArgumentException | FirebaseAuthException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new IllegalArgumentException("Not supported Firebase access token");
         }
         return firebaseToken;
     }
