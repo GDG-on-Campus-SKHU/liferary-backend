@@ -9,15 +9,18 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TokenUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -36,15 +39,12 @@ public class TokenUserDetailsService implements UserDetailsService {
     }
 
     public MemberDTO.Response save(FirebaseToken firebaseToken) {
-        List<String> roles = new ArrayList<>();
-        roles.add("USER");
-        Member member = memberRepository.findByEmail(firebaseToken.getEmail())
-                .orElse(Member.builder()
-                        .email(firebaseToken.getEmail())
-                        .nickname(firebaseToken.getName())
-                        .password("password")
-                        .roles(roles)
-                        .build());
-        return new MemberDTO.Response(memberRepository.save(member));
+        String password = UUID.randomUUID().toString();
+        return memberService.signup(MemberDTO.SignUp.builder()
+                .email(firebaseToken.getEmail())
+                .nickname(firebaseToken.getName())
+                .password(password)
+                .checkedPassword(password)
+                .build());
     }
 }

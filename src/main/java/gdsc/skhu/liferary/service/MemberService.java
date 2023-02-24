@@ -37,10 +37,10 @@ public class MemberService {
     @Transactional
     public MemberDTO.Response signup(MemberDTO.@Valid SignUp signUpRequestDTO) {
         if (memberRepository.findByEmail(signUpRequestDTO.getEmail()).isPresent()) {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+            throw new IllegalStateException("Duplicated email");
         }
         if (!signUpRequestDTO.getPassword().equals(signUpRequestDTO.getCheckedPassword())) {
-            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+            throw new IllegalStateException("Password mismatch");
         }
         List<String> roles = new ArrayList<>();
         roles.add("USER");
@@ -89,14 +89,11 @@ public class MemberService {
     public MemberDTO.Response login(ServletRequest request) {
         String token;
         FirebaseToken firebaseToken;
-        request = (HttpServletRequest) request;
         try {
             token = ((HttpServletRequest) request).getHeader("Authorization");
-            System.out.println("token = " + token);
             firebaseToken = firebaseAuth.verifyIdToken(token);
         } catch (IllegalArgumentException | FirebaseAuthException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
-                    "{\"code\":\"INVALID_TOKEN\", \"message\":\"" + e.getMessage() + "\"}");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
         String password = passwordEncoder.encode(UUID.randomUUID().toString());
