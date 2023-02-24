@@ -5,11 +5,13 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.service.TokenUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,21 +24,14 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class FirebaseFilter extends GenericFilterBean {
     private final TokenUserDetailsService tokenUserDetailsService;
-    private final FirebaseAuth firebaseAuth;
+    private final TokenProvider tokenProvider;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = resolveToken((HttpServletRequest) request);
-        FirebaseToken firebaseToken;
-        try {
-            firebaseToken = firebaseAuth.verifyIdToken(token);
-        } catch (FirebaseAuthException e) {
-            chain.doFilter(request, response);
-            return;
-        }
+        FirebaseToken firebaseToken = tokenProvider.getFirebaseToken(request);
 
         try {
-            tokenUserDetailsService.save(firebaseToken);
+            tokenUserDetailsService.saveUser(firebaseToken);
             UserDetails user = tokenUserDetailsService.loadUserByUsername(firebaseToken.getEmail());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     user, null, user.getAuthorities()
@@ -47,13 +42,5 @@ public class FirebaseFilter extends GenericFilterBean {
             return;
         }
         chain.doFilter(request, response);
-    }
-
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 }
