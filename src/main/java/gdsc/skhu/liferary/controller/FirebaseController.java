@@ -1,12 +1,16 @@
 package gdsc.skhu.liferary.controller;
 
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.service.MemberService;
+import gdsc.skhu.liferary.token.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +26,7 @@ import javax.servlet.ServletRequest;
 @RestController
 public class FirebaseController {
     private final MemberService memberService;
+    private final TokenProvider tokenProvider;
 
     // Create
     @Operation(summary = "firebase login", description = "Login with Firebase")
@@ -31,7 +36,8 @@ public class FirebaseController {
     })
     @PostMapping("/login")
     public MemberDTO.Response login(ServletRequest request) {
-        return memberService.login(request);
+        FirebaseToken firebaseToken = tokenProvider.getFirebaseToken(request);
+        return memberService.login(firebaseToken);
     }
 
     // Read
