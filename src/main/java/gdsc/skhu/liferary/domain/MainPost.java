@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +30,9 @@ public class MainPost extends BaseTime {
 
     @Column(name = "context", nullable = false)
     private String context;
+
+    @OneToMany(mappedBy = "mainPost", orphanRemoval = true)
+    private List<MainPostImage> images;
 
     @Column(name = "video")
     private String video;

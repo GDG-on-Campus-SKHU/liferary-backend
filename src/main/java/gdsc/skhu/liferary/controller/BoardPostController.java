@@ -28,7 +28,7 @@ public class BoardPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/new")
-    public ResponseEntity<BoardPostDTO.Response> save(@RequestBody BoardPostDTO.Request boardPostDTO) {
+    public ResponseEntity<BoardPostDTO.Response> save(@ModelAttribute BoardPostDTO.Request boardPostDTO) {
         return ResponseEntity.ok(boardPostService.save(boardPostDTO));
     }
 

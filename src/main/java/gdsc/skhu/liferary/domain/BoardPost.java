@@ -35,4 +35,7 @@ public class BoardPost extends BaseTime {
 
     @OneToMany(mappedBy = "boardPost", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "boardPost", orphanRemoval = true)
+    private List<BoardPostImage> images;
 }

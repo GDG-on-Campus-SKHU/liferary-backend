@@ -31,6 +31,7 @@ public class BoardPostService {
                 .author(memberRepository.findByEmail(request.getAuthor())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
+                .images(request.getImages().stream().map(image -> uploadToFirebaseStorage()));
                 .build();
         return new BoardPostDTO.Response(boardPostRepository.save(boardPost));
     }
