@@ -79,7 +79,7 @@ public class MainPostController {
     })
     @PatchMapping("/{id}")
     public ResponseEntity<MainPostDTO.Response> update(@RequestBody MainPostDTO.Update update,
-                                                       @PathVariable("id") Long id) {
+                                                       @PathVariable("id") Long id) throws IOException {
         return ResponseEntity.ok(mainPostService.update(update, id));
     }
 
