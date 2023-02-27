@@ -3,15 +3,17 @@ package gdsc.skhu.liferary.domain.DTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import gdsc.skhu.liferary.domain.MainPost;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPostDTO {
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -25,6 +27,8 @@ public class MainPostDTO {
         private String category;
         @Schema(description = "Context", defaultValue = "Test Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<MultipartFile> images;
         @Schema(description = "Video URL", defaultValue = "https://www.youtube.com")
         private String video;
     }
@@ -43,6 +47,8 @@ public class MainPostDTO {
         private String category;
         @Schema(description = "Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<String> images;
         @Schema(description = "Video URL")
         private String video;
         @Schema(description = "Modified Date")
@@ -54,6 +60,11 @@ public class MainPostDTO {
             this.nickname = mainPost.getAuthor().getNickname();
             this.category = mainPost.getCategory();
             this.context = mainPost.getContext();
+            if(mainPost.getImages() == null) {
+                this.images = new ArrayList<>();
+            } else {
+                this.images = mainPost.getImages();
+            }
             this.video = mainPost.getVideo();
             this.modifiedDate = mainPost.getModifiedDate();
         }
@@ -71,6 +82,8 @@ public class MainPostDTO {
         private String category;
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<MultipartFile> images;
         @Schema(description = "Video URL", defaultValue = "https://www.youtube.com")
         private String video;
     }

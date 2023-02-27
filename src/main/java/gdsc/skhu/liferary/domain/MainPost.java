@@ -1,11 +1,13 @@
 package gdsc.skhu.liferary.domain;
 
+import gdsc.skhu.liferary.util.StringListConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +31,10 @@ public class MainPost extends BaseTime {
 
     @Column(name = "context", nullable = false)
     private String context;
+
+    @Column(name = "images", length = 1000)
+    @Convert(converter = StringListConverter.class)
+    private List<String> images;
 
     @Column(name = "video")
     private String video;

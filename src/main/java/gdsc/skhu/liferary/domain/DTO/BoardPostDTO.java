@@ -1,8 +1,10 @@
 package gdsc.skhu.liferary.domain.DTO;
 
 import gdsc.skhu.liferary.domain.BoardPost;
+import gdsc.skhu.liferary.service.ImageService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ public class BoardPostDTO {
         private String author;
         @Schema(description = "Context", defaultValue = "Test Board Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<MultipartFile> images;
     }
 
     @Getter
@@ -41,6 +45,8 @@ public class BoardPostDTO {
         private String context;
         @Schema(description = "Comments")
         private List<CommentDTO.Response> comments;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<String> images;
         @Schema(description = "Modified Date")
         private LocalDateTime modifiedDate;
 
@@ -53,6 +59,11 @@ public class BoardPostDTO {
                 this.comments = new ArrayList<>();
             } else {
                 this.comments = boardPost.getComments().stream().map(CommentDTO.Response::new).collect(Collectors.toList());
+            }
+            if(boardPost.getImages() == null) {
+                this.images = new ArrayList<>();
+            } else {
+                this.images = boardPost.getImages();
             }
             this.modifiedDate = boardPost.getModifiedDate();
         }
@@ -68,5 +79,7 @@ public class BoardPostDTO {
         private String title;
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<MultipartFile> images;
     }
 }
