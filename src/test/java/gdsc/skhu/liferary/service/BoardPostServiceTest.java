@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @SpringBootTest
 class BoardPostServiceTest {
@@ -33,10 +34,10 @@ class BoardPostServiceTest {
     @DisplayName("Board post save logic")
     void save() throws IOException {
         //given
-        Member member = new Member(1L, "testuser@gmail.com", "testpassword", "testuser");
+        Member member = new Member(1L, "testuser@gmail.com", "testuser", "testpassword", new ArrayList<>());
         memberRepository.save(member);
 
-        MainPost mainPost = new MainPost(1L, "Hello Liferary Main", member, "programming", "This is context of main post", "video url");
+        MainPost mainPost = new MainPost(1L, "Hello Liferary Main", member, "programming", "This is context of main post", new ArrayList<>(), "Video URL");
         mainPostRepository.save(mainPost);
 
         BoardPostDTO.Request request = BoardPostDTO.Request.builder()
