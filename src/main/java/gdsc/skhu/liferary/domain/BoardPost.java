@@ -35,7 +35,7 @@ public class BoardPost extends BaseTime {
     private String context;
 
     @OneToMany(mappedBy = "boardPost", orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
     @Column(name = "images", length = 1000)
     @Convert(converter = StringListConverter.class)
