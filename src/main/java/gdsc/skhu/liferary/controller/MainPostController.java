@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @Tag(name = "MainPost", description = "API for main board post")
@@ -31,7 +32,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/new")
-    public ResponseEntity<MainPostDTO.Response> save(Principal principal, @RequestBody MainPostDTO.Request request) {
+    public ResponseEntity<MainPostDTO.Response> save(Principal principal, @ModelAttribute MainPostDTO.Request request) throws IOException {
+        System.out.println(request.getAuthor());
         return ResponseEntity.ok(mainPostService.save(principal, request));
     }
 
