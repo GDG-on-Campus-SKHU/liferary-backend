@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Tag(name = "BoardPost", description = "API for community board post")
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class BoardPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/new")
-    public ResponseEntity<BoardPostDTO.Response> save(@ModelAttribute BoardPostDTO.Request boardPostDTO) {
+    public ResponseEntity<BoardPostDTO.Response> save(@ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
         return ResponseEntity.ok(boardPostService.save(boardPostDTO));
     }
 
@@ -65,7 +67,7 @@ public class BoardPostController {
     @PatchMapping("/{mainPostId}/post/{id}")
     public ResponseEntity<BoardPostDTO.Response> update(@RequestBody BoardPostDTO.Update update,
                                                        @PathVariable("mainPostId") Long mainPostId,
-                                                       @PathVariable("id") Long id) {
+                                                       @PathVariable("id") Long id) throws IOException {
         return ResponseEntity.ok(boardPostService.update(update, mainPostId, id));
     }
 

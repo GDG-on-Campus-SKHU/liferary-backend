@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+
 @SpringBootTest
 class BoardPostServiceTest {
     @Autowired
@@ -29,7 +31,7 @@ class BoardPostServiceTest {
 
     @Test
     @DisplayName("Board post save logic")
-    void save() {
+    void save() throws IOException {
         //given
         Member member = new Member(1L, "testuser@gmail.com", "testpassword", "testuser");
         memberRepository.save(member);

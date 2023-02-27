@@ -3,6 +3,7 @@ package gdsc.skhu.liferary.service;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,14 +13,19 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Service
+@RequiredArgsConstructor
 public class FirebaseService {
-    @Value("${firebase.bucket}")
-    private String firebaseBucket;
+    private final Bucket firebaseBucket;
 
-    public String uploadFiles(MultipartFile image) throws IOException {
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseBucket);
+    public String uploadToFirebase(String path, MultipartFile image) throws IOException {
         InputStream content = new ByteArrayInputStream(image.getBytes());
-        Blob blob = bucket.create(image.getOriginalFilename(), content, image.getContentType());
+        Blob blob = firebaseBucket.create(path, content, image.getContentType());
         return blob.getMediaLink();
+    }
+
+    public void deleteFromFirebase(String path) {
+        if(firebaseBucket.get(path).exists()) {
+            firebaseBucket.get(path).delete();
+        }
     }
 }

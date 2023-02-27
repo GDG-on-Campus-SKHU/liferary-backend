@@ -12,15 +12,10 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardPostImage extends BaseTime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Image extends BaseTime {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "board_post_id", nullable = false)
-    private BoardPost boardPost;
 
     @Column(name = "image_original_name", nullable = false)
     private String originalImageName;
