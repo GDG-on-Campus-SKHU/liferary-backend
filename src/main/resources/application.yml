@@ -18,6 +18,19 @@ spring:
   sql:
     init:
       mode: always
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_CLIENT_ID}
+            client-secret: ${OAUTH_CLIENT_PASSWORD}
+            scope:
+              - profile
+              - email
+  redis:
+    host: localhost
+    port: 6379
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -35,3 +48,8 @@ springdoc:
 jwt:
   secret: ${JWT_SECRET_KEY}
   token-validity-in-milliseconds: 86400000
+
+firebase:
+  secret: ${FIREBASE_SECRET_KEY_PATH}
+
+
