@@ -53,7 +53,7 @@ public class MainPostController {
     })
     @GetMapping("/{category}/{pageNumber}")
     public Page<MainPostDTO.Response> findByCategory(@PathVariable("category") String category,
-                                                     @PathVariable("pageNumber") Integer pageNumber) {
+                                                      @PathVariable("pageNumber") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return mainPostService.findByCategory(pageable, category);
     }
