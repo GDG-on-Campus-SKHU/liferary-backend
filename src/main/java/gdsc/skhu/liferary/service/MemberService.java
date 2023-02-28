@@ -1,53 +1,82 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.DTO.LoginDTO;
-import gdsc.skhu.liferary.domain.DTO.SignUpDTO;
+import com.google.firebase.auth.FirebaseToken;
+import gdsc.skhu.liferary.configure.cache.CacheKey;
+import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
+import gdsc.skhu.liferary.domain.LogoutAccessToken;
 import gdsc.skhu.liferary.domain.Member;
-import gdsc.skhu.liferary.jwt.TokenProvider;
+import gdsc.skhu.liferary.domain.RefreshToken;
+import gdsc.skhu.liferary.jwt.JwtExpirationEnums;
+import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
+import gdsc.skhu.liferary.repository.RefreshTokenRedisRepository;
+import gdsc.skhu.liferary.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
-import java.util.*;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
+import static gdsc.skhu.liferary.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-
+    //user 회원가입
     @Transactional
-    public Long signup(SignUpDTO signUpRequestDTO) {
-        if (memberRepository.findByEmail(signUpRequestDTO.getEmail()).isPresent()) {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
-        }
-        if (!signUpRequestDTO.getPassword().equals(signUpRequestDTO.getCheckedPassword())) {
-            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
-        }
-        List<String> roles = new ArrayList<>();
-        roles.add("USER");
+    public MemberDTO.Response join(MemberDTO.@Valid Join joinRequestDto) {
 
-        Member member = memberRepository.saveAndFlush(Member.builder()
-                .email(signUpRequestDTO.getEmail())
-                .nickname(signUpRequestDTO.getNickname())
-                .password(passwordEncoder.encode(signUpRequestDTO.getPassword()))
-                .roles(roles).build());
+        if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
+            throw new IllegalStateException("Duplicated email");
+        }
+        if (!joinRequestDto.getPassword().equals(joinRequestDto.getCheckedPassword())) {
+            throw new IllegalStateException("Password mismatch");
+        }
+        joinRequestDto.setPassword(passwordEncoder.encode(joinRequestDto.getPassword()));
+        Member member = memberRepository.saveAndFlush(Member.ofUser(joinRequestDto));
 
-        return member.getId();
+        return new MemberDTO.Response(memberRepository.findById(member.getId())
+                .orElseThrow(() -> new NoSuchElementException("Member not found")));
     }
 
+    //admin 회원가입
+    @Transactional
+    public MemberDTO.Response joinAdmin(MemberDTO.Join joinRequestDto) {
+
+        if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
+            throw new IllegalStateException("Duplicated email");
+        }
+        if (!joinRequestDto.getPassword().equals(joinRequestDto.getCheckedPassword())) {
+            throw new IllegalStateException("Password mismatch");
+        }
+        Member member = memberRepository.saveAndFlush(Member.ofAdmin(joinRequestDto));
+
+        return new MemberDTO.Response(memberRepository.findById(member.getId())
+                .orElseThrow(() -> new NoSuchElementException("Member not found")));
+    }
 
     /* 회원가입 시, 유효성 체크 */
     @Transactional(readOnly = true)
@@ -62,56 +91,108 @@ public class MemberService {
         return validatorResult;
     }
 
-    //email 중복 확인
-    @Transactional(readOnly = true)
-    public void checkEmailDuplication(SignUpDTO dto) {
-        boolean emailDuplicate = memberRepository.existsByEmail(dto.toEntity().getEmail());
-        if (emailDuplicate) {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
-        }
-    }
-
+    //로그인
     @Transactional
-    public TokenDTO login(String email, String password) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-
+    public TokenDTO login(MemberDTO.Login login) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getEmail(),login.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        TokenDTO tokenDTO = tokenProvider.createToken(authentication);
-
-        return tokenDTO;
+        return tokenProvider.createToken(authentication);
     }
+
+//    //login할 때 checkpassword
+//    private void checkPassword(String rawPassword, String findMemberPassword) {
+//        if (!passwordEncoder.matches(rawPassword, findMemberPassword)) {
+//            throw new IllegalArgumentException("Passwords do not match.");
+//        }
+//    }
+
+    //firebase Login
+    @Transactional
+    public MemberDTO.Response login(FirebaseToken firebaseToken) {
+        if (memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
+            return new MemberDTO.Response(memberRepository.findByEmail(firebaseToken.getEmail())
+                    .orElseThrow(() -> new NoSuchElementException("Member not found")));
+        }
+
+        String password = passwordEncoder.encode(UUID.randomUUID().toString());
+        return join(MemberDTO.Join.builder()
+                .email(firebaseToken.getEmail())
+                .nickname(firebaseToken.getName())
+                .password(password)
+                .checkedPassword(password)
+                .build());
+    }
+
+    @Transactional(readOnly = true)
+    public MemberDTO.Login findById(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+        return MemberDTO.Login.builder()
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .build();
+    }
+
+    //firebase에서
+    public MemberDTO.Response findByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+        return new MemberDTO.Response(member);
+    }
+
+
+    private RefreshToken saveRefreshToken(String username) {
+        return refreshTokenRedisRepository.save(RefreshToken.createRefreshToken(username,
+                tokenProvider.generateRefreshToken(username), REFRESH_TOKEN_EXPIRATION_TIME.getValue()));
+    }
+
+
+    //로그아웃
+    @CacheEvict(value = CacheKey.USER, key = "#username")
+    public void logout(TokenDTO tokenDto, String username) {
+        String accessToken = resolveToken(tokenDto.getAccessToken());
+        long remainMilliSeconds = tokenProvider.getRemainMilliSeconds(accessToken);
+        refreshTokenRedisRepository.deleteById(username);
+        logoutAccessTokenRedisRepository.save(LogoutAccessToken.of(accessToken, username, remainMilliSeconds));
+    }
+
+    private String resolveToken(String token) {
+        return token.substring(7);
+    }
+
+    //토큰 재발급
+    public TokenDTO reissue(String refreshToken) {
+        refreshToken = resolveToken(refreshToken);
+        String username = getCurrentUsername();
+        RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(username).orElseThrow(NoSuchElementException::new);
+
+        if (refreshToken.equals(redisRefreshToken.getRefreshToken())) {
+            return reissueRefreshToken(refreshToken, username);
+        }
+        throw new IllegalArgumentException("토큰이 일치하지 않습니다.");
+    }
+
+    private String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        return principal.getUsername();
+    }
+
+    private TokenDTO reissueRefreshToken(String refreshToken, String username) {
+        if (lessThanReissueExpirationTimesLeft(refreshToken)) {
+            String accessToken = tokenProvider.generateAccessToken(username);
+            return TokenDTO.of(accessToken, saveRefreshToken(username).getRefreshToken());
+        }
+        return TokenDTO.of(tokenProvider.generateAccessToken(username), refreshToken);
+    }
+
+    private boolean lessThanReissueExpirationTimesLeft(String refreshToken) {
+        return tokenProvider.getRemainMilliSeconds(refreshToken) < JwtExpirationEnums.REISSUE_EXPIRATION_TIME.getValue();
+    }
+
     @Transactional
     public void withdraw(Long id) {
         memberRepository.deleteById(id);
     }
 
-
-    //회원 정보 조회
-    @Transactional(readOnly = true)
-    public LoginDTO findById(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(()-> new NoSuchElementException("Not Found Member"));
-        return LoginDTO.builder()
-                .email(member.getEmail())
-                .password(member.getPassword())
-                .build();
-    }
-//    @Transactional
-//    public void withdraw(String checkPassword) throws Exception {
-//        Member member = memberRepository.findById(SecurityUtil.getLoginUsername()).orElseThrow(() -> new Exception("회원이 존재하지 않습니다"));
-//
-//        if(!member.matchPassword(passwordEncoder, checkPassword) ) {
-//            throw new Exception("비밀번호가 일치하지 않습니다.");
-//        }
-//
-//        memberRepository.delete(member);
-//    }
-
-
-//    //회원 정보 삭제
-//    @Transactional
-//    public void removeMember(Long id) {
-//        memberRepository.deleteById(id);
-//    }
 }

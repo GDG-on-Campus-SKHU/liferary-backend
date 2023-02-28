@@ -1,5 +1,6 @@
 package gdsc.skhu.liferary.controller;
 
+import com.google.api.Authentication;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.service.MainPostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Tag(name = "MainPost", description = "API for main board post")
 @RestController
@@ -28,8 +31,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/new")
-    public ResponseEntity<MainPostDTO.Response> save(@RequestBody MainPostDTO.Request request) {
-        return ResponseEntity.ok(mainPostService.save(request));
+    public ResponseEntity<MainPostDTO.Response> save(Principal principal, @RequestBody MainPostDTO.Request request) {
+        return ResponseEntity.ok(mainPostService.save(principal, request));
     }
 
     // Read
