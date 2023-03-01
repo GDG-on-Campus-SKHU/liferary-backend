@@ -11,11 +11,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
@@ -24,11 +27,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 public class MemberController {
-
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
 
-
+    // Create
     @Operation(summary = "create member", description = "Create member")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -62,7 +64,6 @@ public class MemberController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
-
             /* 입력한 내용을 유지하고자 응답 DTO에 담아서 보냄 */
             return ResponseEntity.badRequest().body(new MemberDTO.Response(joinDto.toEntity()));
         }

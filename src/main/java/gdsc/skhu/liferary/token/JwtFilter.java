@@ -33,8 +33,7 @@ public class JwtFilter extends GenericFilterBean {
         }
         chain.doFilter(request, response);
     }
-
-
+    
     private void checkLogout(String token) {
         if (logoutAccessTokenRedisRepository.existsById(token)) {
             throw new IllegalArgumentException("이미 로그아웃된 회원입니다.");

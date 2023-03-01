@@ -32,7 +32,6 @@ public class SecurityConfig {
     private final TokenUserDetailsService tokenUserDetailsService;
     private final TokenProvider tokenProvider;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
-
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",

@@ -3,11 +3,14 @@ package gdsc.skhu.liferary.token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,7 +59,6 @@ public class TokenProvider {
         String username = principal.getUsername();
 
         String accessToken = doGenerateToken(username, ACCESS_TOKEN_EXPIRATION_TIME.getValue());
-
         String refreshToken = doGenerateToken(username, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
 
 //        return TokenDTO.builder()
@@ -133,7 +135,6 @@ public class TokenProvider {
         return parseClaims(token).get("username", String.class);
     }
 
-
     public String generateAccessToken(String username) {
         return doGenerateToken(username, ACCESS_TOKEN_EXPIRATION_TIME.getValue());
     }
@@ -143,7 +144,6 @@ public class TokenProvider {
     }
 
     private String doGenerateToken(String username, long expireTime) {
-
         Claims claims = Jwts.claims();
         claims.put("username", username);
 

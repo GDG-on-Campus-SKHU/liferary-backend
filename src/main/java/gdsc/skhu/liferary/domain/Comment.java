@@ -35,5 +35,5 @@ public class Comment extends BaseTime {
     private Comment parentComment;
 
     @OneToMany(mappedBy = "parentComment", orphanRemoval = true)
-    private List<Comment> childComments = new ArrayList<>();
+    private List<Comment> childComments;
 }

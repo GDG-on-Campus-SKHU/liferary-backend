@@ -10,7 +10,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class MemberDTO {
-
     @Getter
     @Setter
     @NoArgsConstructor
@@ -18,7 +17,6 @@ public class MemberDTO {
     @Builder
     @Schema(name = "MemberDTO.Join")
     public static class Join {
-
         @NotBlank(message = "이메일을 입력해주세요.")
         //이메일 정규식
         @Pattern(regexp = "^[\\w!#$%&amp;'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&amp;'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$",
@@ -58,7 +56,9 @@ public class MemberDTO {
     @Builder
     @Schema(name = "MemberDTO.login")
     public static class Login {
+        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
         private String email; //id로 받을 email
+        @Schema(description = "Password", defaultValue = "testpassword")
         private String password;
     }
 

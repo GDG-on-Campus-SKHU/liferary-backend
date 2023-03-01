@@ -2,6 +2,7 @@ package gdsc.skhu.liferary.service;
 
 import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
+import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.repository.BoardPostRepository;
 import gdsc.skhu.liferary.repository.MainPostRepository;
@@ -12,18 +13,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class BoardPostService {
-    public final MainPostRepository mainPostRepository;
-    public final BoardPostRepository boardPostRepository;
-    public final MemberRepository memberRepository;
+    private final MainPostRepository mainPostRepository;
+    private final BoardPostRepository boardPostRepository;
+    private final MemberRepository memberRepository;
+    private final ImageService imageService;
 
     // Create
-    public BoardPostDTO.Response save(BoardPostDTO.Request request) {
+    public BoardPostDTO.Response save(BoardPostDTO.Request request) throws IOException {
         BoardPost boardPost = BoardPost.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
                         .orElseThrow(() -> new NoSuchElementException("Main post not found")))
@@ -31,7 +36,14 @@ public class BoardPostService {
                 .author(memberRepository.findByEmail(request.getAuthor())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
+                .images(new ArrayList<>())
                 .build();
+        if(request.getImages() != null) {
+            for(MultipartFile file : request.getImages()) {
+                ImageDTO.Response image = imageService.uploadImage("board/", file);
+                boardPost.getImages().add(image.getImagePath());
+            }
+        }
         return new BoardPostDTO.Response(boardPostRepository.save(boardPost));
     }
 
@@ -50,7 +62,7 @@ public class BoardPostService {
     }
 
     // Update
-    public BoardPostDTO.Response update(BoardPostDTO.Update update, Long mainPostId, Long id) {
+    public BoardPostDTO.Response update(BoardPostDTO.Update update, Long mainPostId, Long id) throws IOException {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         BoardPost oldBoardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Board post with this ID"));
@@ -61,7 +73,14 @@ public class BoardPostService {
                 .author(oldBoardPost.getAuthor())
                 .context(update.getContext())
                 .comments(oldBoardPost.getComments())
+                .images(new ArrayList<>())
                 .build();
+        if(update.getImages() != null) {
+            for(MultipartFile file : update.getImages()) {
+                ImageDTO.Response image = imageService.uploadImage("/board/", file);
+                newBoardPost.getImages().add(image.getImagePath());
+            }
+        }
         boardPostRepository.save(newBoardPost);
         return this.findById(newBoardPost.getMainPost().getId(), id);
     }
@@ -69,9 +88,16 @@ public class BoardPostService {
     public ResponseEntity<String> delete(Long mainPostId, Long id) {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         try {
+            BoardPost boardPost = boardPostRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("Board post not found"));
+            if(!boardPost.getImages().isEmpty()) {
+                for(String path : boardPost.getImages()) {
+                    imageService.deleteImage(path);
+                }
+            }
             boardPostRepository.deleteById(id);
         } catch (Exception e) {
-            return new ResponseEntity<String>("Exception occurred", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Exception occurred", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok("Delete success");
     }
