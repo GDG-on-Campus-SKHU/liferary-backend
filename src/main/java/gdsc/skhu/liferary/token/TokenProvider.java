@@ -3,15 +3,15 @@ package gdsc.skhu.liferary.token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.nimbusds.oauth2.sdk.dpop.verifiers.AccessTokenValidationException;
+
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +28,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static gdsc.skhu.liferary.jwt.JwtExpirationEnums.ACCESS_TOKEN_EXPIRATION_TIME;
+import static gdsc.skhu.liferary.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 
 @Slf4j
 @Component
@@ -46,31 +48,25 @@ public class TokenProvider {
         this.validityTime = validityTime;
         this.firebaseAuth = firebaseAuth;
     }
+
     //token 생성
     public TokenDTO createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+//        String authorities = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime();
-        Date tokenExpiredTime = new Date(now + validityTime);
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setExpiration(tokenExpiredTime)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
 
-        String refreshToken = Jwts.builder()
-                .setExpiration(tokenExpiredTime)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        String accessToken = doGenerateToken(username, ACCESS_TOKEN_EXPIRATION_TIME.getValue());
+        String refreshToken = doGenerateToken(username, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
 
-        return TokenDTO.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+//        return TokenDTO.builder()
+//                .grantType("Bearer")
+//                .accessToken(accessToken)
+//                .refreshToken(refreshToken)
+//                .build();
+        return TokenDTO.of(accessToken,refreshToken);
     }
 
     //복호화해서 토큰에 들어있는 정보 꺼내는 메서드
@@ -133,5 +129,35 @@ public class TokenProvider {
             throw new IllegalArgumentException("Not supported Firebase access token");
         }
         return firebaseToken;
+    }
+
+    public String getUsername(String token) {
+        return parseClaims(token).get("username", String.class);
+    }
+
+    public String generateAccessToken(String username) {
+        return doGenerateToken(username, ACCESS_TOKEN_EXPIRATION_TIME.getValue());
+    }
+
+    public String generateRefreshToken(String username) {
+        return doGenerateToken(username, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
+    }
+
+    private String doGenerateToken(String username, long expireTime) {
+        Claims claims = Jwts.claims();
+        claims.put("username", username);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .signWith(key)
+                .compact();
+    }
+
+    public long getRemainMilliSeconds(String token) {
+        Date expiration = parseClaims(token).getExpiration();
+        Date now = new Date();
+        return expiration.getTime() - now.getTime();
     }
 }
