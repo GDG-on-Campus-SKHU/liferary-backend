@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping("/new")
-    public ResponseEntity<StudyDTO.Response> save(@RequestBody StudyDTO.Request request) {
+    @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<StudyDTO.Response> save(@ModelAttribute StudyDTO.Request request) {
         return ResponseEntity.ok(studyService.save(request));
     }
 
@@ -45,9 +46,9 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping("/{mainPostId}")
-    public ResponseEntity<StudyDTO.Response> update(@RequestBody StudyDTO.Update update,
-                                                        @PathVariable("mainPostId") Long mainPostId) {
+    @PatchMapping(name = "/{mainPostId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<StudyDTO.Response> update(@ModelAttribute StudyDTO.Update update,
+                                                    @RequestParam("mainPostId") Long mainPostId) {
         return ResponseEntity.ok(studyService.update(update, mainPostId));
     }
 

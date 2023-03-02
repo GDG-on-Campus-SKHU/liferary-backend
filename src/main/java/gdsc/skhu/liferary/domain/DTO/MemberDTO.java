@@ -81,17 +81,5 @@ public class MemberDTO {
             this.nickname = member.getNickname();
         }
     }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema(name = "MemberDTO.OAuth2")
-    public static class OAuth2 {
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String email;
-        @Schema(description = "Nickname", defaultValue = "LiferaryGood")
-        private String nickname;
-    }
 }
 

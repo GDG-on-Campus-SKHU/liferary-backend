@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.configure.cache.CacheKey;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.Member;
+import gdsc.skhu.liferary.domain.RedisUserDetails;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -30,11 +31,7 @@ public class TokenUserDetailsService implements UserDetailsService {
 
     // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(Member member) {
-        return User.builder()
-                .username(member.getEmail())
-                .password(member.getPassword())
-                .roles(member.getAuthority().toString())
-                .build();
+        return RedisUserDetails.of(member);
     }
 
     public MemberDTO.Response saveUser(FirebaseToken firebaseToken) {

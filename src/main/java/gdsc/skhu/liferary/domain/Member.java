@@ -22,12 +22,13 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Column(name = "nickname")
     private String nickname;
 
+    @Column(name = "password")
     private String password;
 
     @Enumerated(EnumType.STRING)
