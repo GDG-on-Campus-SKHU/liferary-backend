@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.controller;
 
-import com.google.api.Authentication;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.service.MainPostService;
 import io.swagger.v3.oas.annotations.Operation;

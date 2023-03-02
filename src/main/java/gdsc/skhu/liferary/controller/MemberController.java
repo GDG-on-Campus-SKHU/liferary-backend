@@ -11,14 +11,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
@@ -82,18 +79,14 @@ public class MemberController {
 
     @PostMapping("/reissue")
     public ResponseEntity<TokenDTO> reissue(@RequestHeader("RefreshToken") String refreshToken) {
-        return ResponseEntity.ok(memberService.reissue(refreshToken));
+        return ResponseEntity.ok(tokenProvider.reissue(refreshToken));
     }
 
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String accessToken,
                        @RequestHeader("RefreshToken") String refreshToken) {
-        String username = tokenProvider.getUsername(resolveToken(accessToken));
+        String username = tokenProvider.getUsername(tokenProvider.resolveToken(accessToken));
         memberService.logout(TokenDTO.of(accessToken, refreshToken), username);
-    }
-
-    private String resolveToken(String accessToken) {
-        return accessToken.substring(7);
     }
 
     @Operation(summary = "delete member", description = "Delete member")

@@ -11,6 +11,6 @@ public enum JwtExpirationEnums {
     REFRESH_TOKEN_EXPIRATION_TIME("Refresh 토큰 만료 시간 / 7일", 1000L * 60 * 60 * 24 * 7),
     REISSUE_EXPIRATION_TIME("Refresh 토큰 만료 시간 / 3일", 1000L * 60 * 60 * 24 * 3);
 
-    private String description;
-    private Long value;
+    private final String description;
+    private final Long value;
 }

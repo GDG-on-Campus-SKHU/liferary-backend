@@ -33,10 +33,10 @@ public class MemberDTO {
         // 비밀번호 정규식
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$",
                 message = "8~20자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
-        @Schema(description = "Password", defaultValue = "testpassword")
+        @Schema(description = "Password", defaultValue = "@Test1234")
         private String password;
 
-        @Schema(description = "Password Check", defaultValue = "testpassword")
+        @Schema(description = "Password Check", defaultValue = "@Test1234")
         // 비밀번호 일치 확인
         private String checkedPassword;
 
@@ -58,7 +58,7 @@ public class MemberDTO {
     public static class Login {
         @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
         private String email; //id로 받을 email
-        @Schema(description = "Password", defaultValue = "testpassword")
+        @Schema(description = "Password", defaultValue = "@Test1234")
         private String password;
     }
 

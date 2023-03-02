@@ -51,7 +51,6 @@ springdoc:
     - /api/**
 jwt:
   secret: ${JWT_SECRET_KEY}
-  token-validity-in-milliseconds: 86400000
 firebase:
   bucket: ${FIREBASE_STORAGE_BUCKET}
   secret: ${FIREBASE_SECRET_KEY_PATH}

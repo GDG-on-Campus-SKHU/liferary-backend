@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class BoardPostService {
     private final ImageService imageService;
 
     // Create
+    @Transactional
     public BoardPostDTO.Response save(BoardPostDTO.Request request) throws IOException {
         BoardPost boardPost = BoardPost.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
@@ -48,6 +50,7 @@ public class BoardPostService {
     }
 
     //Read
+    @Transactional
     public Page<BoardPostDTO.Response> findByMainPost(Pageable pageable, Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
@@ -62,6 +65,7 @@ public class BoardPostService {
     }
 
     // Update
+    @Transactional
     public BoardPostDTO.Response update(BoardPostDTO.Update update, Long mainPostId, Long id) throws IOException {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         BoardPost oldBoardPost = boardPostRepository.findById(id)
@@ -85,6 +89,7 @@ public class BoardPostService {
         return this.findById(newBoardPost.getMainPost().getId(), id);
     }
 
+    @Transactional
     public ResponseEntity<String> delete(Long mainPostId, Long id) {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         try {
