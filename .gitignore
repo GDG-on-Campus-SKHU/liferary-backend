@@ -6,6 +6,7 @@ HELP.md
 docker-compose.yml
 **/src/main/resources/data.sql
 **/src/main/resources/firebasekey.json
+.DS_Store
 
 build/
 

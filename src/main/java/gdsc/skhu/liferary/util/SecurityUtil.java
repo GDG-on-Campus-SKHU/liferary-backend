@@ -1,4 +1,4 @@
-package gdsc.skhu.liferary.configure;
+package gdsc.skhu.liferary.util;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;

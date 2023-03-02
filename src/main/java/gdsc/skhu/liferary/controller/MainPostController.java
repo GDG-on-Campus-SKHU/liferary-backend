@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.controller;
 
-import com.google.api.Authentication;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.service.MainPostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +32,6 @@ public class MainPostController {
     })
     @PostMapping("/new")
     public ResponseEntity<MainPostDTO.Response> save(Principal principal, @ModelAttribute MainPostDTO.Request request) throws IOException {
-        System.out.println(request.getAuthor());
         return ResponseEntity.ok(mainPostService.save(principal, request));
     }
 
@@ -78,7 +76,7 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<MainPostDTO.Response> update(@RequestBody MainPostDTO.Update update,
+    public ResponseEntity<MainPostDTO.Response> update(@ModelAttribute MainPostDTO.Update update,
                                                        @PathVariable("id") Long id) throws IOException {
         return ResponseEntity.ok(mainPostService.update(update, id));
     }

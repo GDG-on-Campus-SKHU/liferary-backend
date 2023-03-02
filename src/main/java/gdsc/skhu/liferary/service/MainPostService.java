@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.MainPost;
@@ -12,13 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class MainPostService {
     private final ImageService imageService;
 
     // Create
+    @Transactional
     public MainPostDTO.Response save(Principal principal, MainPostDTO.Request request) throws IOException {
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
@@ -52,6 +52,7 @@ public class MainPostService {
     }
 
     // Update
+    @Transactional
     public MainPostDTO.Response findById(Long id) {
         return new MainPostDTO.Response(mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID")));
@@ -66,6 +67,7 @@ public class MainPostService {
     }
 
     // Update
+    @Transactional
     public MainPostDTO.Response update(MainPostDTO.Update update, Long id) throws IOException {
         MainPost oldMainPost = mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID"));
@@ -93,6 +95,7 @@ public class MainPostService {
     }
 
     // Delete
+    @Transactional
     public ResponseEntity<String> delete(Long id) {
         try {
             mainPostRepository.deleteById(id);

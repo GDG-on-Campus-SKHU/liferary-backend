@@ -1,5 +1,6 @@
 package gdsc.skhu.liferary.configure;
 
+import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
 import gdsc.skhu.liferary.token.FirebaseFilter;
 import gdsc.skhu.liferary.token.JwtFilter;
 import gdsc.skhu.liferary.token.TokenProvider;
@@ -30,6 +31,7 @@ import java.util.List;
 public class SecurityConfig {
     private final TokenUserDetailsService tokenUserDetailsService;
     private final TokenProvider tokenProvider;
+    private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
     private static final String[] PERMITTED_URLS = {
             /* Swagger v2 */
             "/v2/api-docs",
@@ -60,15 +62,15 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                    .antMatchers(PERMITTED_URLS).permitAll()
-                    .anyRequest().authenticated();
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers(PERMITTED_URLS).permitAll()
+                .anyRequest().authenticated();
 
         http
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider,logoutAccessTokenRedisRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, tokenProvider), JwtFilter.class);
         return http.build();
     }

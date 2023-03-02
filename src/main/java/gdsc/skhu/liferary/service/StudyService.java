@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
@@ -21,6 +22,7 @@ public class StudyService {
     private final StudyRepository studyRepository;
 
     // Create
+    @Transactional
     public StudyDTO.Response save(StudyDTO.Request request) {
         Study study = Study.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
@@ -34,6 +36,7 @@ public class StudyService {
     }
 
     // Read
+    @Transactional
     public StudyDTO.Response findByMainPost(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
@@ -42,6 +45,7 @@ public class StudyService {
     }
 
     // Update
+    @Transactional
     public StudyDTO.Response update(StudyDTO.Update update, Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
@@ -59,6 +63,7 @@ public class StudyService {
     }
 
     // Delete
+    @Transactional
     public ResponseEntity<String> delete(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));

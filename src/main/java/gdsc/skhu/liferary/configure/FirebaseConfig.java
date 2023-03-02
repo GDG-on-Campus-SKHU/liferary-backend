@@ -19,7 +19,7 @@ public class FirebaseConfig {
     @Value("${firebase.secret}")
     private String secretKeyPath;
 
-    @Value("${FIREBASE_STORAGE_BUCKET}")
+    @Value("${firebase.bucket}")
     private String firebaseBucket;
 
     @Bean

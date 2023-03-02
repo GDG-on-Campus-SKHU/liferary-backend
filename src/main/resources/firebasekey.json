@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "gdsc-skhu-coderoad",
+  "private_key_id": "262620c89a89a3afdae6168f9fa5cf8d4a90a198",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4ad20dmwh8dk7\nWsxI6wEP9k5s5wngrKZ9KtSdWVKd12PjPIv6v1sqO7o6M+Ftj5Jpu/gLqNdDifO5\njBs9xEZWY9t255/KrrnCyL6VO8e+6o2KqbMQTFzG2/KRhG102BenjJWwOwxNXzi6\n4cPSsgBTez+XUMPKJ/u1WiyDoeT/oTf53TV1jcIBrUWFrHtP/z2P/NPzra8iZVhj\nib7Qlirel37IbzIIfYr73KcLhM2080IM5zrL03jBs3JLDz59aLN97hECWar0I4o/\nxDeE/zUy6vAHFSGtwrVBSIIwjymtXKva1MNB2sN9QC1e9KReyrGG7ahcSNRhPgCu\npXQ3i+cJAgMBAAECggEAAeD05O7D6+tGgZ1LhtP7acniQ1Jt6P+5SSh+NrAp8E5j\nx8qJHoqD3OqeML5F5f4tdAL55EcvEj1ojJO0f1eYOS8WlZ/cd+MkegCI4y+oZEsy\nxUk0os40Wm5JNVmlB9NfwlGOANfz0yH3i6fbJ91aYCoERtVdeUTDrWBNeHXWGxM+\nnqysxQM81nlxu6s20kXWVHlBjqxxawP21XIDY6IuoNTk2EjJ3iULMlr4Nes1yyY4\ndtStLc8yuEafDlAF8nEVmwOE+4yd999wkE8jhIIw32u4evOnNwaeGT0EOrP/QLYK\nNPHXVzdFS8JTnQMP9zSD8GY4MztRE50aqgSM0LtVBQKBgQDrmP7s8yYEuS7atMtc\nnL3m63R4e7W/kG85HpIfEqBiQ+54os4zKhssKOf4+EfcElu7g3XmY9OWzamoyDQA\ncC+vfyniQNt8bYIDjK2L/xNK8dFqS0bpRYI5lUDwaDEjKbIc09BROgYczme8C4lY\nJUc7Fjmp9l+Jo1JcX9SBwKY6CwKBgQDIYilDpQnbjmyzPWiqFIU6qUreoHvMgLBE\n0NkkKLdwy2kduSHlVSbvu8I7/DL1E3DypJynKuPyANDpvoM18wKNGIki+Jqcw7HY\nl9oHCpIMJQKOCfkZmcclM3ZT5zXIYjIx3HBVgeimCFQEr9IxJ5BQ5bb1iLuL0q8U\n/O/QGpAjuwKBgQCkUJSblgnSCYXQK4AaG4em4ljdHwrnjEjGQbgPy+HoJxDPOl0t\n+hPxfKYtUpxrtLId2dYE1WLhLpdBjEAYfiYD9GC12B48bfPbneX8We6OupEf3Vib\noUrt9lbQVRrQN2huCpyjyiAxPxPCZxlnTLidUSbuj1KaoDn1CzEfPcmxeQKBgAdA\npkWwf37W1NBX9KXTQE8zOWZ9YH2yWq7i8DkC0EDg29kbjkKCpnoezZTmN+Hu5jOi\nCZlzT/S+WtFa99zIAtuge7YsUUxDOPih5l5C365Y2JLTgZSPoEmUZz/6KlQqWa68\nT8SIgycfPgs9YdotmGeVKN4SKNeStIuJ7BQYIgdpAoGAV2NrY8r6Q/aaxLe1cbf9\ndEPJkTQsiLDVt3NxEsQkeVklq0CGFYVmU3NxWm56DD4tzjlW8RcUs9Obyrh1CE+W\nHmmvKx4abC2Jq9XeR6U8wZEq1ssI4Ln5gh4Q/l5MB2ofSheXopXCnaVI4U9gpdLe\nNo8k9jYHaxkjbcbcMRKvqV0=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-gc8co@gdsc-skhu-coderoad.iam.gserviceaccount.com",
+  "client_id": "109822275610673493718",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-gc8co%40gdsc-skhu-coderoad.iam.gserviceaccount.com"
+}
