@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import gdsc.skhu.liferary.domain.MainPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;

@@ -21,9 +21,9 @@ public class TokenUserDetailsService implements UserDetailsService {
     private final MemberService memberService;
 
     @Override
-    @Cacheable(value = CacheKey.USER, key = "#username", unless = "#result == null")
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(username)
+    @Cacheable(value = CacheKey.USER, key = "#email", unless = "#result == null")
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return memberRepository.findByEmail(email)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
     }
@@ -31,7 +31,7 @@ public class TokenUserDetailsService implements UserDetailsService {
     // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(Member member) {
         return User.builder()
-                .username(member.getUsername())
+                .username(member.getEmail())
                 .password(member.getPassword())
                 .roles(member.getAuthority().toString())
                 .build();

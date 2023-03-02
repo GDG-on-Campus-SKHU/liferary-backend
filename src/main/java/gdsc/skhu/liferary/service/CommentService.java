@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     // Create
+    @Transactional
     public CommentDTO.Response save(CommentDTO.Request request) {
         Comment comment = Comment.builder()
                 .boardPost(boardPostRepository.findById(request.getBoardPostId())

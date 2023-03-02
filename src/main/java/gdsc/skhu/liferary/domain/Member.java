@@ -18,14 +18,9 @@ import static lombok.AccessLevel.PROTECTED;
 @AllArgsConstructor(access = PROTECTED)
 @Builder
 public class Member {
-
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
-
-    @Column(unique = true)
-    private String username;
 
     @Column(unique = true)
     private String email;
@@ -39,25 +34,21 @@ public class Member {
     private Authority authority;
 
     public static Member ofUser(MemberDTO.Join joinDto) {
-        Member member = Member.builder()
-                .username(UUID.randomUUID().toString())
+        return Member.builder()
                 .email(joinDto.getEmail())
                 .nickname(joinDto.getNickname())
                 .password(joinDto.getPassword())
                 .authority(Authority.USER)
                 .build();
-        return member;
     }
 
     public static Member ofAdmin(MemberDTO.Join joinDto) {
-        Member member = Member.builder()
-                .username(UUID.randomUUID().toString())
+        return Member.builder()
                 .email(joinDto.getEmail())
                 .nickname(joinDto.getNickname())
                 .password(joinDto.getPassword())
                 .authority(Authority.ADMIN)
                 .build();
-        return member;
     }
 
 }
