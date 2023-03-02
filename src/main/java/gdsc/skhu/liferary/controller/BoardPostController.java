@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping("/new")
+    @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BoardPostDTO.Response> save(@ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
         return ResponseEntity.ok(boardPostService.save(boardPostDTO));
     }
@@ -64,10 +65,10 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping("/{mainPostId}/post/{id}")
-    public ResponseEntity<BoardPostDTO.Response> update(@RequestBody BoardPostDTO.Update update,
-                                                       @PathVariable("mainPostId") Long mainPostId,
-                                                       @PathVariable("id") Long id) throws IOException {
+    @PatchMapping(name = "/{mainPostId}/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BoardPostDTO.Response> update(@ModelAttribute BoardPostDTO.Update update,
+                                                       @RequestParam(name = "mainPostId") Long mainPostId,
+                                                       @RequestParam(name = "id") Long id) throws IOException {
         return ResponseEntity.ok(boardPostService.update(update, mainPostId, id));
     }
 

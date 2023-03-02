@@ -33,6 +33,8 @@ public class CommentDTO {
     public static class Response {
         @Schema(description = "Comment Id")
         private Long id;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Origin writer nickname")
         private String writer;
         @Schema(description = "Context")
@@ -44,6 +46,7 @@ public class CommentDTO {
 
         public Response(Comment comment) {
             this.id = comment.getId();
+            this.author = comment.getWriter().getEmail();
             this.writer = comment.getWriter().getNickname();
             this.context = comment.getContext();
             this.childComments = comment.getChildComments().stream()

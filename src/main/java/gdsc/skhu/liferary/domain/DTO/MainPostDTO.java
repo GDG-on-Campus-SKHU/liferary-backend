@@ -40,6 +40,8 @@ public class MainPostDTO {
         private Long id;
         @Schema(description = "Title")
         private String title;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Nickname")
         private String nickname;
         @Schema(description = "Category")
@@ -56,6 +58,7 @@ public class MainPostDTO {
         public Response(MainPost mainPost) {
             this.id = mainPost.getId();
             this.title = mainPost.getTitle();
+            this.author = mainPost.getAuthor().getEmail();
             this.nickname = mainPost.getAuthor().getNickname();
             this.category = mainPost.getCategory();
             this.context = mainPost.getContext();
