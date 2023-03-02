@@ -1,7 +1,9 @@
 package gdsc.skhu.liferary.service;
 
+import gdsc.skhu.liferary.domain.Authority;
 import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
+import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.BoardPostRepository;
@@ -34,7 +36,7 @@ class BoardPostServiceTest {
     @DisplayName("Board post save logic")
     void save() throws IOException {
         //given
-        Member member = new Member(1L, "testuser@gmail.com", "testuser", "testpassword", new ArrayList<>());
+        Member member = Member.ofUser(new MemberDTO.Join("testuser@gmail.com", "testuser", "@Test1234", "@Test1234"));
         memberRepository.save(member);
 
         MainPost mainPost = new MainPost(1L, "Hello Liferary Main", member, "programming", "This is context of main post", new ArrayList<>(), "Video URL");

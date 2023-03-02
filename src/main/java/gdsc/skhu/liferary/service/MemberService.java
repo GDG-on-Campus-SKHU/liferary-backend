@@ -60,7 +60,6 @@ public class MemberService {
     //admin 회원가입
     @Transactional
     public MemberDTO.Response joinAdmin(MemberDTO.Join joinRequestDto) {
-
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
             throw new IllegalStateException("Duplicated email");
         }
@@ -97,7 +96,7 @@ public class MemberService {
     //firebase Login
     @Transactional
     public MemberDTO.Response login(FirebaseToken firebaseToken) {
-        if (memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
+        if(memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
             return new MemberDTO.Response(memberRepository.findByEmail(firebaseToken.getEmail())
                     .orElseThrow(() -> new NoSuchElementException("Member not found")));
         }
@@ -141,5 +140,4 @@ public class MemberService {
     public void withdraw(Long id) {
         memberRepository.deleteById(id);
     }
-
 }

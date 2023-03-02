@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -68,18 +69,23 @@ public class MainPostService {
 
     // Update
     @Transactional
-    public MainPostDTO.Response update(MainPostDTO.Update update, Long id) throws IOException {
+    public MainPostDTO.Response update(Principal principal, MainPostDTO.Update update, Long id) throws IOException {
         MainPost oldMainPost = mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID"));
-        MainPost newMainPost = MainPost.builder()
-                .id(id)
-                .title(update.getTitle())
-                .author(oldMainPost.getAuthor())
-                .category(update.getCategory())
-                .context(update.getContext())
-                .images(new ArrayList<>())
-                .video(update.getVideo())
-                .build();
+        MainPost newMainPost;
+        if(principal.getName().equals(oldMainPost.getAuthor().getEmail())) {
+            newMainPost = MainPost.builder()
+                    .id(id)
+                    .title(update.getTitle())
+                    .author(oldMainPost.getAuthor())
+                    .category(update.getCategory())
+                    .context(update.getContext())
+                    .images(new ArrayList<>())
+                    .video(update.getVideo())
+                    .build();
+        } else {
+            throw new AuthenticationException("Wrong username");
+        }
 
         if(update.getImages() != null) {
             for(MultipartFile file : update.getImages()) {

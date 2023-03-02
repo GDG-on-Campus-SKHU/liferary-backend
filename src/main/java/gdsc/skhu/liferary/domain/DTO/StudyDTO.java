@@ -33,6 +33,8 @@ public class StudyDTO {
         private Long id;
         @Schema(description = "Title")
         private String title;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Nickname")
         private String nickname;
         @Schema(description = "Context")
@@ -42,6 +44,7 @@ public class StudyDTO {
         public Response(Study study) {
             this.id = study.getId();
             this.title = study.getTitle();
+            this.author = study.getAuthor().getEmail();
             this.nickname = study.getAuthor().getNickname();
             this.context = study.getContext();
             this.modifiedDate = study.getModifiedDate();

@@ -11,10 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 
@@ -32,8 +31,8 @@ public class FirebaseController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping("/login")
-    public MemberDTO.Response login(ServletRequest request) {
+    @PostMapping("/join")
+    public MemberDTO.Response join(ServletRequest request) {
         FirebaseToken firebaseToken = tokenProvider.getFirebaseToken(request);
         return memberService.login(firebaseToken);
     }
@@ -46,8 +45,7 @@ public class FirebaseController {
     })
     @GetMapping("/info")
     public MemberDTO.Response getInfo(Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
-        System.out.println(currentUser.getUsername());
+        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
         return memberService.findByEmail(currentUser.getUsername());
     }
 }

@@ -38,6 +38,8 @@ public class BoardPostDTO {
         private Long id;
         @Schema(description = "Title")
         private String title;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Nickname")
         private String nickname;
         @Schema(description = "Context")
@@ -52,6 +54,7 @@ public class BoardPostDTO {
         public Response(BoardPost boardPost) {
             this.id = boardPost.getId();
             this.title = boardPost.getTitle();
+            this.author = boardPost.getAuthor().getEmail();
             this.nickname = boardPost.getAuthor().getNickname();
             this.context = boardPost.getContext();
             if(boardPost.getComments() == null) {
