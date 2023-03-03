@@ -20,8 +20,6 @@ public class MainPostDTO {
     public static class Request {
         @Schema(description = "Title", defaultValue = "Test Title")
         private String title;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String author;
         @Schema(description = "Category", defaultValue = "programming")
         private String category;
         @Schema(description = "Context", defaultValue = "Test Context")

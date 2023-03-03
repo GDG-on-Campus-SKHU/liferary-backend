@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,7 +85,7 @@ public class MainPostService {
                     .video(update.getVideo())
                     .build();
         } else {
-            throw new AuthenticationException("Wrong username");
+            throw new AuthorizationServiceException("Unauthorized access");
         }
 
         if(update.getImages() != null) {

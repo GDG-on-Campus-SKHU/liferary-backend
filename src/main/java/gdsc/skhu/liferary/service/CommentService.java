@@ -9,9 +9,11 @@ import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,11 +27,11 @@ public class CommentService {
 
     // Create
     @Transactional
-    public CommentDTO.Response save(CommentDTO.Request request) {
+    public CommentDTO.Response save(Principal principal, CommentDTO.Request request) {
         Comment comment = Comment.builder()
                 .boardPost(boardPostRepository.findById(request.getBoardPostId())
                         .orElseThrow(() -> new NoSuchElementException("Board post not found")))
-                .writer(memberRepository.findByEmail(request.getWriter())
+                .writer(memberRepository.findByEmail(principal.getName())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .childComments(new ArrayList<>())
@@ -37,13 +39,13 @@ public class CommentService {
         return new CommentDTO.Response(commentRepository.save(comment));
     }
 
-    public CommentDTO.Response reply(CommentDTO.Reply reply) {
+    public CommentDTO.Response reply(Principal principal, CommentDTO.Reply reply) {
         Comment comment = Comment.builder()
                 .boardPost(boardPostRepository.findById(reply.getBoardPostId())
                         .orElseThrow(() -> new NoSuchElementException("Board post not found")))
                 .parentComment(commentRepository.findById(reply.getParentCommentId())
                         .orElseThrow(() -> new NoSuchElementException("Comment not found")))
-                .writer(memberRepository.findByEmail(reply.getWriter())
+                .writer(memberRepository.findByEmail(principal.getName())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(reply.getContext())
                 .childComments(new ArrayList<>())
@@ -71,17 +73,22 @@ public class CommentService {
     }
 
     //Update
-    public CommentDTO.Response update(CommentDTO.Update update, Long boardPostId, Long id) {
+    public CommentDTO.Response update(Principal principal, CommentDTO.Update update, Long boardPostId, Long id) {
         boardPostRepository.findById(boardPostId)
                 .orElseThrow(() -> new NoSuchElementException("Board post not found"));
         Comment oldComment = this.findById(id);
-        Comment newComment = Comment.builder()
-                .id(id)
-                .boardPost(oldComment.getBoardPost())
-                .writer(oldComment.getWriter())
-                .context(update.getContext())
-                .childComments(oldComment.getChildComments())
-                .build();
+        Comment newComment;
+        if(oldComment.getWriter().getEmail().equals(principal.getName())) {
+            newComment = Comment.builder()
+                    .id(id)
+                    .boardPost(oldComment.getBoardPost())
+                    .writer(oldComment.getWriter())
+                    .context(update.getContext())
+                    .childComments(oldComment.getChildComments())
+                    .build();
+        } else {
+            throw new AuthorizationServiceException("Unauthorized access");
+        }
         commentRepository.save(newComment);
         return new CommentDTO.Response(this.findById(newComment.getId()));
     }

@@ -20,8 +20,6 @@ public class StudyDTO {
         private Long mainPostId;
         @Schema(description = "Title", defaultValue = "Test study Title")
         private String title;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String author;
         @Schema(description = "Context", defaultValue = "Test study Context")
         private String context;
     }

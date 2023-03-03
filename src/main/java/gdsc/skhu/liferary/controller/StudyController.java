@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Tag(name = "Study", description = "API for study")
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +27,8 @@ public class StudyController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<StudyDTO.Response> save(@ModelAttribute StudyDTO.Request request) {
-        return ResponseEntity.ok(studyService.save(request));
+    public ResponseEntity<StudyDTO.Response> save(Principal principal, @ModelAttribute StudyDTO.Request request) {
+        return ResponseEntity.ok(studyService.save(principal, request));
     }
 
     // Read
@@ -47,9 +49,10 @@ public class StudyController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping(name = "/{mainPostId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<StudyDTO.Response> update(@ModelAttribute StudyDTO.Update update,
+    public ResponseEntity<StudyDTO.Response> update(Principal principal,
+                                                    @ModelAttribute StudyDTO.Update update,
                                                     @RequestParam("mainPostId") Long mainPostId) {
-        return ResponseEntity.ok(studyService.update(update, mainPostId));
+        return ResponseEntity.ok(studyService.update(principal, update, mainPostId));
     }
 
     // Delete

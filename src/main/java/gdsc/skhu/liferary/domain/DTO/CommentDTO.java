@@ -21,8 +21,6 @@ public class CommentDTO {
     public static class Request {
         @Schema(description = "Board post Id", defaultValue = "1")
         private Long boardPostId;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String writer;
         @Schema(description = "Context", defaultValue = "Test comment context")
         private String context;
     }

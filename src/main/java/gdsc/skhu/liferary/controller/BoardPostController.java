@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @Tag(name = "BoardPost", description = "API for community board post")
 @RestController
@@ -31,8 +32,8 @@ public class BoardPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BoardPostDTO.Response> save(@ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
-        return ResponseEntity.ok(boardPostService.save(boardPostDTO));
+    public ResponseEntity<BoardPostDTO.Response> save(Principal principal, @ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
+        return ResponseEntity.ok(boardPostService.save(principal, boardPostDTO));
     }
 
     // Read
@@ -66,10 +67,11 @@ public class BoardPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping(name = "/{mainPostId}/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BoardPostDTO.Response> update(@ModelAttribute BoardPostDTO.Update update,
-                                                       @RequestParam(name = "mainPostId") Long mainPostId,
-                                                       @RequestParam(name = "id") Long id) throws IOException {
-        return ResponseEntity.ok(boardPostService.update(update, mainPostId, id));
+    public ResponseEntity<BoardPostDTO.Response> update(Principal principal,
+                                                        @ModelAttribute BoardPostDTO.Update update,
+                                                        @RequestParam(name = "mainPostId") Long mainPostId,
+                                                        @RequestParam(name = "id") Long id) throws IOException {
+        return ResponseEntity.ok(boardPostService.update(principal, update, mainPostId, id));
     }
 
     // Delete
