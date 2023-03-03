@@ -22,8 +22,6 @@ public class BoardPostDTO {
         private Long mainPostId;
         @Schema(description = "Title", defaultValue = "Test Board Title")
         private String title;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String author;
         @Schema(description = "Context", defaultValue = "Test Board Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
