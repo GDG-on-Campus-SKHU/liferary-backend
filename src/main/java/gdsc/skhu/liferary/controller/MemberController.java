@@ -97,9 +97,8 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @GetMapping("/info")
-    public MemberDTO.Response getInfo(Authentication authentication) {
-        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
-        return memberService.findByEmail(currentUser.getUsername());
+    public MemberDTO.Response getInfo(Principal principal) {
+        return memberService.findByEmail(principal.getName());
     }
 
     @Operation(summary = "delete member", description = "Delete member")
