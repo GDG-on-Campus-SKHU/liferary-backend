@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -87,6 +89,17 @@ public class MemberController {
                        @RequestHeader("RefreshToken") String refreshToken) {
         String username = tokenProvider.getUsername(tokenProvider.resolveToken(accessToken));
         memberService.logout(TokenDTO.of(accessToken, refreshToken), username);
+    }
+
+    @Operation(summary = "user info", description = "Read user info")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/info")
+    public MemberDTO.Response getInfo(Authentication authentication) {
+        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
+        return memberService.findByEmail(currentUser.getUsername());
     }
 
     @Operation(summary = "delete member", description = "Delete member")
