@@ -36,7 +36,7 @@ class BoardPostServiceTest {
     @DisplayName("Board post save logic")
     void save() throws IOException {
         //given
-        Member member = Member.ofUser(new MemberDTO.Join("testuser@gmail.com", "testuser", "@Test1234", "@Test1234"));
+        Member member = Member.ofUser(new MemberDTO.Join("testuser@gmail.com", "testuser", "@Test1234", "@Test1234", false));
         memberRepository.save(member);
 
         MainPost mainPost = new MainPost(1L, "Hello Liferary Main", member, "programming", "This is context of main post", new ArrayList<>(), "Video URL");
@@ -45,7 +45,6 @@ class BoardPostServiceTest {
         BoardPostDTO.Request request = BoardPostDTO.Request.builder()
                 .mainPostId(1L)
                 .title("Hello Liferary Board")
-                .author("testuser@gmail.com")
                 .context("This is context")
                 .build();
 

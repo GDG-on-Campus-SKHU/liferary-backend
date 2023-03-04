@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
+import java.security.Principal;
 
 @Tag(name = "Member", description = "API for authentication and authorization")
 @RequiredArgsConstructor
@@ -42,8 +43,7 @@ public class FirebaseController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @GetMapping("/info")
-    public MemberDTO.Response getInfo(Authentication authentication) {
-        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
-        return memberService.findByEmail(currentUser.getUsername());
+    public MemberDTO.Response getInfo(Principal principal) {
+        return memberService.findByEmail(principal.getName());
     }
 }

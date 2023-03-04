@@ -25,14 +25,17 @@ public class Member {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+    @Column(name = "isFirebaseAuth", nullable = false)
+    private boolean isFirebaseAuth;
 
     public static Member ofUser(MemberDTO.Join joinDto) {
         return Member.builder()
@@ -40,6 +43,7 @@ public class Member {
                 .nickname(joinDto.getNickname())
                 .password(joinDto.getPassword())
                 .authority(Authority.USER)
+                .isFirebaseAuth(joinDto.isFirebaseAuth())
                 .build();
     }
 
@@ -49,6 +53,7 @@ public class Member {
                 .nickname(joinDto.getNickname())
                 .password(joinDto.getPassword())
                 .authority(Authority.ADMIN)
+                .isFirebaseAuth(joinDto.isFirebaseAuth())
                 .build();
     }
 

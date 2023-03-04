@@ -107,6 +107,7 @@ public class MemberService {
                 .nickname(firebaseToken.getName())
                 .password(password)
                 .checkedPassword(password)
+                .isFirebaseAuth(true)
                 .build());
     }
 
