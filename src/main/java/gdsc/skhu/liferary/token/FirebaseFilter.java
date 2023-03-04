@@ -24,7 +24,6 @@ public class FirebaseFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         FirebaseToken firebaseToken;
-
         try {
             firebaseToken = tokenProvider.getFirebaseToken(request);
             tokenUserDetailsService.saveUser(firebaseToken);

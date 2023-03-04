@@ -40,11 +40,15 @@ public class MemberDTO {
         // 비밀번호 일치 확인
         private String checkedPassword;
 
+        @Schema(description = "Firebase Check", defaultValue = "false")
+        private boolean isFirebaseAuth;
+
         public Member toEntity() {
             return Member.builder()
                     .email(email)
                     .password(password)
                     .nickname(nickname)
+                    .isFirebaseAuth(isFirebaseAuth)
                     .build();
         }
     }
@@ -66,19 +70,19 @@ public class MemberDTO {
     @Schema(name = "MemberDTO.Response")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {
-        @Schema(description = "id")
-        private Long id;
-
         @Schema(description = "Username(email)")
         private String email;
 
         @Schema(description = "Nickname")
         private String nickname;
 
+        @Schema(description = "Firebase Authentication")
+        private boolean isFirebaseAuth;
+
         public Response(Member member) {
-            this.id = member.getId();
             this.email = member.getEmail();
             this.nickname = member.getNickname();
+            this.isFirebaseAuth = member.isFirebaseAuth();
         }
     }
 }
