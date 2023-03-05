@@ -41,14 +41,14 @@ public class MemberDTO {
         private String checkedPassword;
 
         @Schema(description = "Firebase Check", defaultValue = "false")
-        private boolean isFirebaseAuth;
+        private boolean firebaseAuth;
 
         public Member toEntity() {
             return Member.builder()
                     .email(email)
                     .password(password)
                     .nickname(nickname)
-                    .isFirebaseAuth(isFirebaseAuth)
+                    .firebaseAuth(firebaseAuth)
                     .build();
         }
     }
@@ -77,12 +77,12 @@ public class MemberDTO {
         private String nickname;
 
         @Schema(description = "Firebase Authentication")
-        private boolean isFirebaseAuth;
+        private boolean firebaseAuth;
 
         public Response(Member member) {
             this.email = member.getEmail();
             this.nickname = member.getNickname();
-            this.isFirebaseAuth = member.isFirebaseAuth();
+            this.firebaseAuth = member.isFirebaseAuth();
         }
     }
 }
