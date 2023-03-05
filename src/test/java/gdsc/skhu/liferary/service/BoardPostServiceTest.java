@@ -14,8 +14,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 
 @SpringBootTest
@@ -41,7 +43,7 @@ class BoardPostServiceTest {
 
         MainPost mainPost = new MainPost(1L, "Hello Liferary Main", member, "programming", "This is context of main post", new ArrayList<>(), "Video URL");
         mainPostRepository.save(mainPost);
-
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
         BoardPostDTO.Request request = BoardPostDTO.Request.builder()
                 .mainPostId(1L)
                 .title("Hello Liferary Board")
@@ -49,7 +51,7 @@ class BoardPostServiceTest {
                 .build();
 
         //when
-        boardPostService.save(request);
+        boardPostService.save(principal, request);
         BoardPost boardPost = boardPostRepository.findById(1L).get();
 
         //then
