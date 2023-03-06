@@ -31,7 +31,7 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BoardPostDTO.Response> save(Principal principal, @ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
         return ResponseEntity.ok(boardPostService.save(principal, boardPostDTO));
     }
@@ -66,11 +66,11 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping(name = "/{mainPostId}/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{mainPostId}/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BoardPostDTO.Response> update(Principal principal,
                                                         @ModelAttribute BoardPostDTO.Update update,
-                                                        @RequestParam(name = "mainPostId") Long mainPostId,
-                                                        @RequestParam(name = "id") Long id) throws IOException {
+                                                        @PathVariable(name = "mainPostId") Long mainPostId,
+                                                        @PathVariable(name = "id") Long id) throws IOException {
         return ResponseEntity.ok(boardPostService.update(principal, update, mainPostId, id));
     }
 

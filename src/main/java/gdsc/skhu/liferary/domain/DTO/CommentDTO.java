@@ -3,10 +3,7 @@ package gdsc.skhu.liferary.domain.DTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import gdsc.skhu.liferary.domain.Comment;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,6 +67,7 @@ public class CommentDTO {
     }
 
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor

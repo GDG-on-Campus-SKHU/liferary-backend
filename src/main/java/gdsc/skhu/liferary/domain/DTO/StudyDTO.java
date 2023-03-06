@@ -2,15 +2,16 @@ package gdsc.skhu.liferary.domain.DTO;
 
 import gdsc.skhu.liferary.domain.Study;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudyDTO {
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -22,6 +23,8 @@ public class StudyDTO {
         private String title;
         @Schema(description = "Context", defaultValue = "Test study Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<MultipartFile> images;
     }
 
     @Getter
@@ -37,6 +40,9 @@ public class StudyDTO {
         private String nickname;
         @Schema(description = "Context")
         private String context;
+
+        @Schema(description = "Image files", defaultValue = "")
+        private List<String> images;
         @Schema(description = "Modified Date")
         private LocalDateTime modifiedDate;
         public Response(Study study) {
@@ -45,11 +51,17 @@ public class StudyDTO {
             this.author = study.getAuthor().getEmail();
             this.nickname = study.getAuthor().getNickname();
             this.context = study.getContext();
+            if(study.getImages() == null) {
+                this.images = new ArrayList<>();
+            } else {
+                this.images = study.getImages();
+            }
             this.modifiedDate = study.getModifiedDate();
         }
     }
 
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -59,5 +71,7 @@ public class StudyDTO {
         private String title;
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;
+        @Schema(description = "Image files", defaultValue = "")
+        private List<MultipartFile> images;
     }
 }

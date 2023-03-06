@@ -1,5 +1,7 @@
 package gdsc.skhu.liferary.service;
 
+import gdsc.skhu.liferary.domain.BoardPost;
+import gdsc.skhu.liferary.domain.Category;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.MainPost;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class MainPostService {
                 .title(request.getTitle())
                 .author(memberRepository.findByEmail(principal.getName())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
-                .category(request.getCategory())
+                .category(Category.valueOf(request.getCategory().toUpperCase()))
                 .context(request.getContext())
                 .images(new ArrayList<>())
                 .video(request.getVideo())
@@ -53,7 +54,7 @@ public class MainPostService {
         return new MainPostDTO.Response(mainPostRepository.save(mainPost));
     }
 
-    // Update
+    // Read
     @Transactional
     public MainPostDTO.Response findById(Long id) {
         return new MainPostDTO.Response(mainPostRepository.findById(id)
@@ -79,7 +80,7 @@ public class MainPostService {
                     .id(id)
                     .title(update.getTitle())
                     .author(oldMainPost.getAuthor())
-                    .category(update.getCategory())
+                    .category(Category.valueOf(update.getCategory().toUpperCase()))
                     .context(update.getContext())
                     .images(new ArrayList<>())
                     .video(update.getVideo())
@@ -102,12 +103,19 @@ public class MainPostService {
     }
 
     // Delete
-    @Transactional
     public ResponseEntity<String> delete(Long id) {
         try {
+            MainPost mainPost = mainPostRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("Main post not found"));
+            if(mainPost.getImages() != null) {
+                for(String path : mainPost.getImages()) {
+                    imageService.deleteImage(path);
+                }
+            }
             mainPostRepository.deleteById(id);
         } catch (Exception e) {
-            return new ResponseEntity<String>("Exception occurred", HttpStatus.BAD_REQUEST);
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>("Exception occurred", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok("Delete success");
     }
