@@ -1,5 +1,7 @@
 package gdsc.skhu.liferary.service;
 
+import gdsc.skhu.liferary.domain.BoardPost;
+import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.StudyDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Study;
@@ -12,8 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 @Service
@@ -22,10 +27,11 @@ public class StudyService {
     private final MainPostRepository mainPostRepository;
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
+    private final ImageService imageService;
 
     // Create
     @Transactional
-    public StudyDTO.Response save(Principal principal, StudyDTO.Request request) {
+    public StudyDTO.Response save(Principal principal, StudyDTO.Request request) throws IOException {
         Study study = Study.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
                         .orElseThrow(() -> new NoSuchElementException("Main post not found")))
@@ -33,7 +39,14 @@ public class StudyService {
                 .author(memberRepository.findByEmail(principal.getName())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
+                .images(new ArrayList<>())
                 .build();
+        if(request.getImages() != null) {
+            for(MultipartFile file : request.getImages()) {
+                ImageDTO.Response image = imageService.uploadImage("board/", file);
+                study.getImages().add(image.getImagePath());
+            }
+        }
         return new StudyDTO.Response(studyRepository.save(study));
     }
 
@@ -48,7 +61,7 @@ public class StudyService {
 
     // Update
     @Transactional
-    public StudyDTO.Response update(Principal principal, StudyDTO.Update update, Long mainPostId) {
+    public StudyDTO.Response update(Principal principal, StudyDTO.Update update, Long mainPostId) throws IOException {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
         Study oldStudy = studyRepository.findByMainPost(mainPost)
@@ -61,24 +74,37 @@ public class StudyService {
                     .title(update.getTitle())
                     .author(oldStudy.getAuthor())
                     .context(update.getContext())
+                    .images(new ArrayList<>())
                     .build();
         } else {
             throw new AuthorizationServiceException("Unauthorized access");
+        }
+
+        if(update.getImages() != null) {
+            for(MultipartFile file : update.getImages()) {
+                ImageDTO.Response image = imageService.uploadImage("main/", file);
+                newStudy.getImages().add(image.getStoredImageName());
+            }
         }
         studyRepository.save(newStudy);
         return this.findByMainPost(mainPostId);
     }
 
     // Delete
-    @Transactional
     public ResponseEntity<String> delete(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
+        Study study = studyRepository.findByMainPost(mainPost)
+                .orElseThrow(() -> new NoSuchElementException("Study not found"));
         try {
-            studyRepository.delete(studyRepository.findByMainPost(mainPost)
-                    .orElseThrow(() -> new NoSuchElementException("Study not found")));
+            if(study.getImages() != null) {
+                for(String path : study.getImages()) {
+                    imageService.deleteImage(path);
+                }
+            }
+            studyRepository.delete(study);
         } catch (Exception e) {
-            return new ResponseEntity<String>("Exception occurred", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Exception occurred", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok("Delete success");
     }

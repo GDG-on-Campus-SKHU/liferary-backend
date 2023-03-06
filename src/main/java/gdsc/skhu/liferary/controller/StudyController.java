@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @Tag(name = "Study", description = "API for study")
@@ -26,8 +27,8 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<StudyDTO.Response> save(Principal principal, @ModelAttribute StudyDTO.Request request) {
+    @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<StudyDTO.Response> save(Principal principal, @ModelAttribute StudyDTO.Request request) throws IOException {
         return ResponseEntity.ok(studyService.save(principal, request));
     }
 
@@ -48,10 +49,10 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping(name = "/{mainPostId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{mainPostId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudyDTO.Response> update(Principal principal,
                                                     @ModelAttribute StudyDTO.Update update,
-                                                    @RequestParam("mainPostId") Long mainPostId) {
+                                                    @PathVariable("mainPostId") Long mainPostId) throws IOException {
         return ResponseEntity.ok(studyService.update(principal, update, mainPostId));
     }
 
