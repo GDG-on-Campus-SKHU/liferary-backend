@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.MainPost;
@@ -11,8 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,6 +29,7 @@ public class MainPostService {
     private final ImageService imageService;
 
     // Create
+    @Transactional
     public MainPostDTO.Response save(Principal principal, MainPostDTO.Request request) throws IOException {
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
@@ -53,6 +54,7 @@ public class MainPostService {
     }
 
     // Update
+    @Transactional
     public MainPostDTO.Response findById(Long id) {
         return new MainPostDTO.Response(mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID")));
@@ -67,19 +69,24 @@ public class MainPostService {
     }
 
     // Update
-    public MainPostDTO.Response update(MainPostDTO.Update update, Long id) throws IOException {
+    @Transactional
+    public MainPostDTO.Response update(Principal principal, MainPostDTO.Update update, Long id) throws IOException {
         MainPost oldMainPost = mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID"));
-        MainPost newMainPost = MainPost.builder()
-                .id(id)
-                .title(update.getTitle())
-                .author(oldMainPost.getAuthor())
-                .category(update.getCategory())
-                .context(update.getContext())
-                .images(new ArrayList<>())
-                .video(update.getVideo())
-                .build();
-
+        MainPost newMainPost;
+        if(principal.getName().equals(oldMainPost.getAuthor().getEmail())) {
+            newMainPost = MainPost.builder()
+                    .id(id)
+                    .title(update.getTitle())
+                    .author(oldMainPost.getAuthor())
+                    .category(update.getCategory())
+                    .context(update.getContext())
+                    .images(new ArrayList<>())
+                    .video(update.getVideo())
+                    .build();
+        } else {
+            throw new AuthorizationServiceException("Unauthorized access");
+        }
         if(update.getImages() != null) {
             for(MultipartFile file : update.getImages()) {
                 ImageDTO.Response image = imageService.uploadImage("main/", file);
@@ -94,6 +101,7 @@ public class MainPostService {
     }
 
     // Delete
+    @Transactional
     public ResponseEntity<String> delete(Long id) {
         try {
             mainPostRepository.deleteById(id);

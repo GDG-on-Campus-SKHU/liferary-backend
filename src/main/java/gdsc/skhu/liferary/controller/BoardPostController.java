@@ -11,10 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @Tag(name = "BoardPost", description = "API for community board post")
 @RestController
@@ -29,9 +31,9 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping("/new")
-    public ResponseEntity<BoardPostDTO.Response> save(@ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
-        return ResponseEntity.ok(boardPostService.save(boardPostDTO));
+    @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BoardPostDTO.Response> save(Principal principal, @ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
+        return ResponseEntity.ok(boardPostService.save(principal, boardPostDTO));
     }
 
     // Read
@@ -64,12 +66,13 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping("/{mainPostId}/post/{id}")
-    public ResponseEntity<BoardPostDTO.Response> update(@RequestBody BoardPostDTO.Update update,
-                                                       @PathVariable("mainPostId") Long mainPostId,
-                                                       @PathVariable("id") Long id) throws IOException {
-        return ResponseEntity.ok(boardPostService.update(update, mainPostId, id));
-    }
+    @PatchMapping(name = "/{mainPostId}/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BoardPostDTO.Response> update(Principal principal,
+                                                        @ModelAttribute BoardPostDTO.Update update,
+                                                        @RequestParam(name = "mainPostId") Long mainPostId,
+                                                        @RequestParam(name = "id") Long id) throws IOException {
+        return ResponseEntity.ok(boardPostService.update(principal, update, mainPostId, id));
+}
 
     // Delete
     @Operation(summary = "Delete main post", description = "Delete main post")

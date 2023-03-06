@@ -1,11 +1,9 @@
 package gdsc.skhu.liferary.token;
 
 import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
-import gdsc.skhu.liferary.service.TokenUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 

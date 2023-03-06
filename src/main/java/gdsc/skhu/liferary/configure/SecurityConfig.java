@@ -57,6 +57,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
+                .logout().disable()
                 .formLogin().disable()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
@@ -97,7 +98,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .antMatchers("/favicon.ico")
+                .antMatchers(HttpMethod.GET, "/favicon.ico")
                 .antMatchers("/v2/api-docs",
                         "/v2/api-docs/**",
                         "/swagger-resources",
@@ -109,7 +110,8 @@ public class SecurityConfig {
                         "/api-docs/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/api/member/**")
+                        "/api/member/join",
+                        "/api/member/login")
                 .antMatchers(HttpMethod.POST, "/api/firebase/login");
     }
 }

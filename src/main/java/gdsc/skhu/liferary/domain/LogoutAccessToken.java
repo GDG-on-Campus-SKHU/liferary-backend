@@ -13,7 +13,6 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Builder
 public class LogoutAccessToken {
-
     @Id
     private String id;
 

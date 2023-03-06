@@ -33,18 +33,22 @@ public class MemberDTO {
         // 비밀번호 정규식
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$",
                 message = "8~20자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
-        @Schema(description = "Password", defaultValue = "testpassword")
+        @Schema(description = "Password", defaultValue = "@Test1234")
         private String password;
 
-        @Schema(description = "Password Check", defaultValue = "testpassword")
+        @Schema(description = "Password Check", defaultValue = "@Test1234")
         // 비밀번호 일치 확인
         private String checkedPassword;
+
+        @Schema(description = "Firebase Check", defaultValue = "false")
+        private boolean firebaseAuth;
 
         public Member toEntity() {
             return Member.builder()
                     .email(email)
                     .password(password)
                     .nickname(nickname)
+                    .firebaseAuth(firebaseAuth)
                     .build();
         }
     }
@@ -58,40 +62,39 @@ public class MemberDTO {
     public static class Login {
         @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
         private String email; //id로 받을 email
-        @Schema(description = "Password", defaultValue = "testpassword")
+        @Schema(description = "Password", defaultValue = "@Test1234")
         private String password;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Schema(name = "MemberDTO.withdraw")
+    public static class withdraw {
+        @Schema(description = "Password")
+        private String withdrawPassword;
     }
 
     @Getter
     @Schema(name = "MemberDTO.Response")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {
-        @Schema(description = "id")
-        private Long id;
-
         @Schema(description = "Username(email)")
         private String email;
 
         @Schema(description = "Nickname")
         private String nickname;
 
+        @Schema(description = "Firebase Authentication")
+        private boolean firebaseAuth;
+
         public Response(Member member) {
-            this.id = member.getId();
             this.email = member.getEmail();
             this.nickname = member.getNickname();
+            this.firebaseAuth = member.isFirebaseAuth();
         }
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema(name = "MemberDTO.OAuth2")
-    public static class OAuth2 {
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String email;
-        @Schema(description = "Nickname", defaultValue = "LiferaryGood")
-        private String nickname;
     }
 }
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import gdsc.skhu.liferary.domain.MainPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -21,8 +20,6 @@ public class MainPostDTO {
     public static class Request {
         @Schema(description = "Title", defaultValue = "Test Title")
         private String title;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String author;
         @Schema(description = "Category", defaultValue = "programming")
         private String category;
         @Schema(description = "Context", defaultValue = "Test Context")
@@ -41,6 +38,8 @@ public class MainPostDTO {
         private Long id;
         @Schema(description = "Title")
         private String title;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Nickname")
         private String nickname;
         @Schema(description = "Category")
@@ -57,6 +56,7 @@ public class MainPostDTO {
         public Response(MainPost mainPost) {
             this.id = mainPost.getId();
             this.title = mainPost.getTitle();
+            this.author = mainPost.getAuthor().getEmail();
             this.nickname = mainPost.getAuthor().getNickname();
             this.category = mainPost.getCategory();
             this.context = mainPost.getContext();

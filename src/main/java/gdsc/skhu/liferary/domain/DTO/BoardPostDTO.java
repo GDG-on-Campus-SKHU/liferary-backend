@@ -23,8 +23,6 @@ public class BoardPostDTO {
         private Long mainPostId;
         @Schema(description = "Title", defaultValue = "Test Board Title")
         private String title;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String author;
         @Schema(description = "Context", defaultValue = "Test Board Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
@@ -39,6 +37,8 @@ public class BoardPostDTO {
         private Long id;
         @Schema(description = "Title")
         private String title;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Nickname")
         private String nickname;
         @Schema(description = "Context")
@@ -53,6 +53,7 @@ public class BoardPostDTO {
         public Response(BoardPost boardPost) {
             this.id = boardPost.getId();
             this.title = boardPost.getTitle();
+            this.author = boardPost.getAuthor().getEmail();
             this.nickname = boardPost.getAuthor().getNickname();
             this.context = boardPost.getContext();
             if(boardPost.getComments() == null) {

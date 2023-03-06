@@ -3,17 +3,13 @@ package gdsc.skhu.liferary.service;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.Image;
-import gdsc.skhu.liferary.domain.MainPost;
-import gdsc.skhu.liferary.repository.BoardPostRepository;
 import gdsc.skhu.liferary.repository.ImageRepository;
-import gdsc.skhu.liferary.repository.MainPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 

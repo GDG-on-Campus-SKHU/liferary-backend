@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.controller;
 
-import com.google.api.Authentication;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.service.MainPostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +31,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping("/new")
+    @PostMapping(name = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MainPostDTO.Response> save(Principal principal, @ModelAttribute MainPostDTO.Request request) throws IOException {
-        System.out.println(request.getAuthor());
         return ResponseEntity.ok(mainPostService.save(principal, request));
     }
 
@@ -77,10 +76,11 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping("/{id}")
-    public ResponseEntity<MainPostDTO.Response> update(@RequestBody MainPostDTO.Update update,
-                                                       @PathVariable("id") Long id) throws IOException {
-        return ResponseEntity.ok(mainPostService.update(update, id));
+    @PatchMapping(name = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MainPostDTO.Response> update(Principal principal,
+                                                       @ModelAttribute MainPostDTO.Update update,
+                                                       @RequestParam("id") Long id) throws IOException {
+        return ResponseEntity.ok(mainPostService.update(principal, update, id));
     }
 
     // Delete
