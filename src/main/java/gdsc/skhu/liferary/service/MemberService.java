@@ -1,19 +1,16 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.configure.cache.CacheKey;
 import com.google.firebase.auth.FirebaseToken;
-
+import gdsc.skhu.liferary.configure.cache.CacheKey;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.domain.LogoutAccessToken;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
-import gdsc.skhu.liferary.token.TokenProvider;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import gdsc.skhu.liferary.repository.RefreshTokenRedisRepository;
-
+import gdsc.skhu.liferary.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -88,7 +85,7 @@ public class MemberService {
     //로그인
     @Transactional
     public TokenDTO login(MemberDTO.Login login) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getEmail(),login.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         return tokenProvider.createToken(authentication);
     }
@@ -96,7 +93,7 @@ public class MemberService {
     //firebase Login
     @Transactional
     public MemberDTO.Response login(FirebaseToken firebaseToken) {
-        if(memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
+        if (memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
             return new MemberDTO.Response(memberRepository.findByEmail(firebaseToken.getEmail())
                     .orElseThrow(() -> new NoSuchElementException("Member not found")));
         }
@@ -111,15 +108,15 @@ public class MemberService {
                 .build());
     }
 
-    @Transactional(readOnly = true)
-    public MemberDTO.Login findById(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Member not found"));
-        return MemberDTO.Login.builder()
-                .email(member.getEmail())
-                .password(member.getPassword())
-                .build();
-    }
+//    @Transactional(readOnly = true)
+//    public MemberDTO.Login findById(Long id) {
+//        Member member = memberRepository.findById(id)
+//                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+//        return MemberDTO.Login.builder()
+//                .email(member.getEmail())
+//                .password(member.getPassword())
+//                .build();
+//    }
 
     //firebase에서
     public MemberDTO.Response findByEmail(String email) {
@@ -137,8 +134,17 @@ public class MemberService {
         logoutAccessTokenRedisRepository.save(LogoutAccessToken.of(accessToken, username, remainMilliSeconds));
     }
 
-    @Transactional
-    public void withdraw(Long id) {
-        memberRepository.deleteById(id);
+    @CacheEvict(value = CacheKey.USER, key = "#p1")
+    public void withdraw(String withdrawPassword, String email) {
+        Member member = memberRepository.findByEmail(
+                        email)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+
+
+        if (!member.matchPassword(passwordEncoder, withdrawPassword)) {
+            throw new IllegalStateException("Miss Match password");
+        }
+
+        memberRepository.delete(member);
     }
 }

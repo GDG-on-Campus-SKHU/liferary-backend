@@ -51,5 +51,6 @@ jwt:
 
 firebase:
   secret: ${FIREBASE_SECRET_KEY_PATH}
+  bucket: ${FIREBASE_STORAGE_BUCKET}
 
 

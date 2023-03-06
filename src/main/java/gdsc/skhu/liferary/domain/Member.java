@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -55,6 +56,11 @@ public class Member {
                 .authority(Authority.ADMIN)
                 .firebaseAuth(joinDto.isFirebaseAuth())
                 .build();
+    }
+
+    //password 일치하는지 비교
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String withdrawPassword){
+        return passwordEncoder.matches(withdrawPassword, getPassword());
     }
 
 }
