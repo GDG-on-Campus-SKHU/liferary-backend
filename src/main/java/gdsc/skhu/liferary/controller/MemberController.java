@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -86,10 +84,10 @@ public class MemberController {
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken,
                        @RequestHeader("RefreshToken") String refreshToken) {
         String username = tokenProvider.getUsername(tokenProvider.resolveToken(accessToken));
-        memberService.logout(TokenDTO.of(accessToken, refreshToken), username);
+        return memberService.logout(TokenDTO.of(accessToken, refreshToken), username);
     }
 
     @Operation(summary = "user info", description = "Read user info")
@@ -109,7 +107,7 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @DeleteMapping("/withdraw")
-    public void withdraw(@Valid @RequestBody MemberDTO.withdraw memberWithdrawDto) throws Exception {
-        memberService.withdraw(memberWithdrawDto.getWithdrawPassword(), SecurityUtil.getLoginUsername());
+    public ResponseEntity<String> withdraw(@Valid @RequestBody MemberDTO.withdraw memberWithdrawDto) {
+        return memberService.withdraw(memberWithdrawDto.getWithdrawPassword(), SecurityUtil.getLoginUsername());
     }
 }

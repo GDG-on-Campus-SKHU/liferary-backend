@@ -15,6 +15,7 @@ import gdsc.skhu.liferary.repository.RefreshTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -130,24 +131,23 @@ public class MemberService {
 
     // Logout
     @CacheEvict(value = CacheKey.USER, key = "#username")
-    public void logout(TokenDTO tokenDto, String username) {
+    public ResponseEntity<String> logout(TokenDTO tokenDto, String username) {
         String accessToken = tokenProvider.resolveToken(tokenDto.getAccessToken());
         long remainMilliSeconds = tokenProvider.getRemainMilliSeconds(accessToken);
         refreshTokenRedisRepository.deleteById(username);
         logoutAccessTokenRedisRepository.save(LogoutAccessToken.of(accessToken, username, remainMilliSeconds));
+        return ResponseEntity.ok("Logout success");
     }
 
     @CacheEvict(value = CacheKey.USER, key = "#p1")
-    public void withdraw(String withdrawPassword, String email) {
-        Member member = memberRepository.findByEmail(
-                        email)
+    public ResponseEntity<String> withdraw(String withdrawPassword, String email) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException("Member not found"));
 
-
         if (!member.matchPassword(passwordEncoder, withdrawPassword)) {
-            throw new IllegalStateException("Miss Match password");
+            throw new IllegalArgumentException("Miss Match password");
         }
-
         memberRepository.delete(member);
+        return ResponseEntity.ok("Withdraw success");
     }
 }
