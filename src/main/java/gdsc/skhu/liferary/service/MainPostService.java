@@ -88,7 +88,7 @@ public class MainPostService {
         } else {
             throw new AuthorizationServiceException("Unauthorized access");
         }
-
+        
         if(update.getImages() != null) {
             for(MultipartFile file : update.getImages()) {
                 ImageDTO.Response image = imageService.uploadImage("main/", file);
@@ -103,6 +103,7 @@ public class MainPostService {
     }
 
     // Delete
+    @Transactional
     public ResponseEntity<String> delete(Long id) {
         try {
             MainPost mainPost = mainPostRepository.findById(id)

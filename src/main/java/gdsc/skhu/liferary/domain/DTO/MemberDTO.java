@@ -67,6 +67,17 @@ public class MemberDTO {
     }
 
     @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Schema(name = "MemberDTO.withdraw")
+    public static class withdraw {
+        @Schema(description = "Password")
+        private String withdrawPassword;
+    }
+
+    @Getter
     @Schema(name = "MemberDTO.Response")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {

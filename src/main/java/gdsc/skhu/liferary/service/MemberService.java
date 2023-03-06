@@ -88,7 +88,7 @@ public class MemberService {
     //로그인
     @Transactional
     public TokenDTO login(MemberDTO.Login login) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getEmail(),login.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         return tokenProvider.createToken(authentication);
     }
@@ -137,9 +137,17 @@ public class MemberService {
         logoutAccessTokenRedisRepository.save(LogoutAccessToken.of(accessToken, username, remainMilliSeconds));
     }
 
-    // Withdrawal
-    @Transactional
-    public void withdraw(Long id) {
-        memberRepository.deleteById(id);
+    @CacheEvict(value = CacheKey.USER, key = "#p1")
+    public void withdraw(String withdrawPassword, String email) {
+        Member member = memberRepository.findByEmail(
+                        email)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+
+
+        if (!member.matchPassword(passwordEncoder, withdrawPassword)) {
+            throw new IllegalStateException("Miss Match password");
+        }
+
+        memberRepository.delete(member);
     }
 }

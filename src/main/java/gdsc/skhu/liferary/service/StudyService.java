@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.security.Principal;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -86,11 +88,13 @@ public class StudyService {
                 newStudy.getImages().add(image.getStoredImageName());
             }
         }
+
         studyRepository.save(newStudy);
         return this.findByMainPost(mainPostId);
     }
 
     // Delete
+    @Transactional
     public ResponseEntity<String> delete(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));

@@ -4,12 +4,12 @@ import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.service.MemberService;
 import gdsc.skhu.liferary.token.TokenProvider;
+import gdsc.skhu.liferary.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +18,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Map;
 
@@ -101,18 +102,14 @@ public class MemberController {
         return memberService.findByEmail(principal.getName());
     }
 
+    //withdraw (회원탈퇴)
     @Operation(summary = "delete member", description = "Delete member")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(Principal principal, @PathVariable Long id) {
-        MemberDTO.Login loginDTO = memberService.findById(id);
-        if(principal.getName().equals(loginDTO.getEmail())) {
-            memberService.withdraw(id);
-            return ResponseEntity.ok("Delete member success");
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("UNAUTHORIZED");
+    @DeleteMapping("/withdraw")
+    public void withdraw(@Valid @RequestBody MemberDTO.withdraw memberWithdrawDto) throws Exception {
+        memberService.withdraw(memberWithdrawDto.getWithdrawPassword(), SecurityUtil.getLoginUsername());
     }
 }
