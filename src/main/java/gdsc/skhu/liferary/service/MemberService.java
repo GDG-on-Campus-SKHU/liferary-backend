@@ -1,17 +1,24 @@
 package gdsc.skhu.liferary.service;
 
-import com.google.firebase.auth.FirebaseToken;
 import gdsc.skhu.liferary.configure.cache.CacheKey;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.domain.LogoutAccessToken;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
+import gdsc.skhu.liferary.token.TokenProvider;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import gdsc.skhu.liferary.repository.RefreshTokenRedisRepository;
 import gdsc.skhu.liferary.token.TokenProvider;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -20,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -89,7 +97,7 @@ public class MemberService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         return tokenProvider.createToken(authentication);
     }
-
+    
     //firebase Login
     @Transactional
     public MemberDTO.Response login(FirebaseToken firebaseToken) {
@@ -107,17 +115,7 @@ public class MemberService {
                 .firebaseAuth(true)
                 .build());
     }
-
-//    @Transactional(readOnly = true)
-//    public MemberDTO.Login findById(Long id) {
-//        Member member = memberRepository.findById(id)
-//                .orElseThrow(() -> new NoSuchElementException("Member not found"));
-//        return MemberDTO.Login.builder()
-//                .email(member.getEmail())
-//                .password(member.getPassword())
-//                .build();
-//    }
-
+    
     //firebase에서
     public MemberDTO.Response findByEmail(String email) {
         Member member = memberRepository.findByEmail(email)

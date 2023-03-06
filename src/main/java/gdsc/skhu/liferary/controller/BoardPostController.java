@@ -72,7 +72,7 @@ public class BoardPostController {
                                                         @RequestParam(name = "mainPostId") Long mainPostId,
                                                         @RequestParam(name = "id") Long id) throws IOException {
         return ResponseEntity.ok(boardPostService.update(principal, update, mainPostId, id));
-    }
+}
 
     // Delete
     @Operation(summary = "Delete main post", description = "Delete main post")

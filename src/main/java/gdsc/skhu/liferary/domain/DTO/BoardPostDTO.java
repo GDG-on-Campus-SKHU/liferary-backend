@@ -1,6 +1,7 @@
 package gdsc.skhu.liferary.domain.DTO;
 
 import gdsc.skhu.liferary.domain.BoardPost;
+import gdsc.skhu.liferary.service.ImageService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;

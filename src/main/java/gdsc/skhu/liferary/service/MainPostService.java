@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,7 +87,6 @@ public class MainPostService {
         } else {
             throw new AuthorizationServiceException("Unauthorized access");
         }
-
         if(update.getImages() != null) {
             for(MultipartFile file : update.getImages()) {
                 ImageDTO.Response image = imageService.uploadImage("main/", file);
