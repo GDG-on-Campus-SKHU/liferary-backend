@@ -45,10 +45,10 @@ public class MemberService {
     @Transactional
     public MemberDTO.Response join(MemberDTO.@Valid Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
-            throw new IllegalStateException("Duplicated email");
+            throw new IllegalArgumentException("Duplicated email");
         }
         if (!joinRequestDto.getPassword().equals(joinRequestDto.getCheckedPassword())) {
-            throw new IllegalStateException("Password mismatch");
+            throw new IllegalArgumentException("Password mismatch");
         }
         joinRequestDto.setPassword(passwordEncoder.encode(joinRequestDto.getPassword()));
         Member member = memberRepository.saveAndFlush(Member.ofUser(joinRequestDto));
@@ -61,10 +61,10 @@ public class MemberService {
     @Transactional
     public MemberDTO.Response joinAdmin(MemberDTO.Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
-            throw new IllegalStateException("Duplicated email");
+            throw new IllegalArgumentException("Duplicated email");
         }
         if (!joinRequestDto.getPassword().equals(joinRequestDto.getCheckedPassword())) {
-            throw new IllegalStateException("Password mismatch");
+            throw new IllegalArgumentException("Password mismatch");
         }
         Member member = memberRepository.saveAndFlush(Member.ofAdmin(joinRequestDto));
 
@@ -121,14 +121,14 @@ public class MemberService {
                 .build();
     }
 
-    //firebase에서
+    // Firebase
     public MemberDTO.Response findByEmail(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException("Member not found"));
         return new MemberDTO.Response(member);
     }
 
-    //로그아웃
+    // Logout
     @CacheEvict(value = CacheKey.USER, key = "#username")
     public void logout(TokenDTO tokenDto, String username) {
         String accessToken = tokenProvider.resolveToken(tokenDto.getAccessToken());
@@ -137,6 +137,7 @@ public class MemberService {
         logoutAccessTokenRedisRepository.save(LogoutAccessToken.of(accessToken, username, remainMilliSeconds));
     }
 
+    // Withdrawal
     @Transactional
     public void withdraw(Long id) {
         memberRepository.deleteById(id);

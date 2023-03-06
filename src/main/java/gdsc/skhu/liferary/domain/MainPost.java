@@ -26,8 +26,8 @@ public class MainPost extends BaseTime {
     @JoinColumn(name = "author", nullable = false)
     private Member author;
 
-    @Column(name = "category", nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @Column(name = "context", nullable = false)
     private String context;
