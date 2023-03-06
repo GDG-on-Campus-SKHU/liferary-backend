@@ -58,7 +58,7 @@ public class MainPostDTO {
             this.title = mainPost.getTitle();
             this.author = mainPost.getAuthor().getEmail();
             this.nickname = mainPost.getAuthor().getNickname();
-            this.category = mainPost.getCategory();
+            this.category = mainPost.getCategory().toString();
             this.context = mainPost.getContext();
             if(mainPost.getImages() == null) {
                 this.images = new ArrayList<>();
@@ -71,6 +71,7 @@ public class MainPostDTO {
     }
 
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -78,7 +79,7 @@ public class MainPostDTO {
     public static class Update {
         @Schema(description = "Title", defaultValue = "Modified Title")
         private String title;
-        @Schema(description = "Category", defaultValue = "exercise")
+        @Schema(description = "Category", defaultValue = "fitness")
         private String category;
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;

@@ -28,10 +28,13 @@ spring:
             scope:
               - profile
               - email
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
   redis:
-    host: localhost
+    host: ${REDIS_HOST}
     port: 6379
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -48,8 +51,6 @@ springdoc:
     - /api/**
 jwt:
   secret: ${JWT_SECRET_KEY}
-  token-validity-in-milliseconds: 86400000
-
 firebase:
   bucket: ${FIREBASE_STORAGE_BUCKET}
   secret: ${FIREBASE_SECRET_KEY_PATH}

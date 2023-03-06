@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,7 +85,7 @@ public class BoardPostService {
                     .images(new ArrayList<>())
                     .build();
         } else {
-            throw new AuthorizationServiceException("Unauthorized access");
+            throw new AccessDeniedException("Unauthorized access");
         }
         if(update.getImages() != null) {
             for(MultipartFile file : update.getImages()) {
@@ -94,6 +94,9 @@ public class BoardPostService {
             }
         }
         boardPostRepository.save(newBoardPost);
+        for(int i = 0; i < newBoardPost.getImages().size(); i++) {
+            newBoardPost.getImages().set(i, imageService.findByStoredImageName(newBoardPost.getImages().get(i)).getImagePath());
+        }
         return this.findById(newBoardPost.getMainPost().getId(), id);
     }
 
@@ -103,7 +106,7 @@ public class BoardPostService {
         try {
             BoardPost boardPost = boardPostRepository.findById(id)
                     .orElseThrow(() -> new NoSuchElementException("Board post not found"));
-            if(!boardPost.getImages().isEmpty()) {
+            if(boardPost.getImages() != null) {
                 for(String path : boardPost.getImages()) {
                     imageService.deleteImage(path);
                 }

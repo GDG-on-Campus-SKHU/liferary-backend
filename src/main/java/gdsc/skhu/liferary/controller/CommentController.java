@@ -65,8 +65,8 @@ public class CommentController {
     })
     @PatchMapping("/{boardPostId}/comment/{id}")
     public ResponseEntity<CommentDTO.Response> update(Principal principal, @RequestBody CommentDTO.Update update,
-                                                      @PathVariable("boardPostId") Long mainPostId,
-                                                      @PathVariable("id") Long id) {
+                                                        @PathVariable("boardPostId") Long mainPostId,
+                                                        @PathVariable("id") Long id) {
         return ResponseEntity.ok(commentService.update(principal, update, mainPostId, id));
     }
 

@@ -1,8 +1,6 @@
 package gdsc.skhu.liferary.service;
 
 import gdsc.skhu.liferary.configure.cache.CacheKey;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
@@ -13,12 +11,10 @@ import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
 import gdsc.skhu.liferary.token.TokenProvider;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import gdsc.skhu.liferary.repository.RefreshTokenRedisRepository;
-import gdsc.skhu.liferary.token.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -50,10 +45,10 @@ public class MemberService {
     @Transactional
     public MemberDTO.Response join(MemberDTO.@Valid Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
-            throw new IllegalStateException("Duplicated email");
+            throw new IllegalArgumentException("Duplicated email");
         }
         if (!joinRequestDto.getPassword().equals(joinRequestDto.getCheckedPassword())) {
-            throw new IllegalStateException("Password mismatch");
+            throw new IllegalArgumentException("Password mismatch");
         }
         joinRequestDto.setPassword(passwordEncoder.encode(joinRequestDto.getPassword()));
         Member member = memberRepository.saveAndFlush(Member.ofUser(joinRequestDto));
@@ -66,10 +61,10 @@ public class MemberService {
     @Transactional
     public MemberDTO.Response joinAdmin(MemberDTO.Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
-            throw new IllegalStateException("Duplicated email");
+            throw new IllegalArgumentException("Duplicated email");
         }
         if (!joinRequestDto.getPassword().equals(joinRequestDto.getCheckedPassword())) {
-            throw new IllegalStateException("Password mismatch");
+            throw new IllegalArgumentException("Password mismatch");
         }
         Member member = memberRepository.saveAndFlush(Member.ofAdmin(joinRequestDto));
 
@@ -101,7 +96,7 @@ public class MemberService {
     //firebase Login
     @Transactional
     public MemberDTO.Response login(FirebaseToken firebaseToken) {
-        if (memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
+        if(memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
             return new MemberDTO.Response(memberRepository.findByEmail(firebaseToken.getEmail())
                     .orElseThrow(() -> new NoSuchElementException("Member not found")));
         }
@@ -115,15 +110,25 @@ public class MemberService {
                 .firebaseAuth(true)
                 .build());
     }
-    
-    //firebase에서
+
+    @Transactional(readOnly = true)
+    public MemberDTO.Login findById(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+        return MemberDTO.Login.builder()
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .build();
+    }
+
+    // Firebase
     public MemberDTO.Response findByEmail(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException("Member not found"));
         return new MemberDTO.Response(member);
     }
 
-    //로그아웃
+    // Logout
     @CacheEvict(value = CacheKey.USER, key = "#username")
     public void logout(TokenDTO tokenDto, String username) {
         String accessToken = tokenProvider.resolveToken(tokenDto.getAccessToken());
