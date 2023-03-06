@@ -9,8 +9,11 @@ import gdsc.skhu.liferary.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.NoSuchElementException;
 
 @Service
@@ -21,12 +24,13 @@ public class StudyService {
     private final StudyRepository studyRepository;
 
     // Create
-    public StudyDTO.Response save(StudyDTO.Request request) {
+    @Transactional
+    public StudyDTO.Response save(Principal principal, StudyDTO.Request request) {
         Study study = Study.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
                         .orElseThrow(() -> new NoSuchElementException("Main post not found")))
                 .title(request.getTitle())
-                .author(memberRepository.findByEmail(request.getAuthor())
+                .author(memberRepository.findByEmail(principal.getName())
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .build();
@@ -34,6 +38,7 @@ public class StudyService {
     }
 
     // Read
+    @Transactional
     public StudyDTO.Response findByMainPost(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
@@ -42,23 +47,30 @@ public class StudyService {
     }
 
     // Update
-    public StudyDTO.Response update(StudyDTO.Update update, Long mainPostId) {
+    @Transactional
+    public StudyDTO.Response update(Principal principal, StudyDTO.Update update, Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
         Study oldStudy = studyRepository.findByMainPost(mainPost)
                 .orElseThrow(() -> new NoSuchElementException("Study not found"));
-        Study newStudy = Study.builder()
-                .id(oldStudy.getId())
-                .mainPost(mainPost)
-                .title(update.getTitle())
-                .author(oldStudy.getAuthor())
-                .context(update.getContext())
-                .build();
+        Study newStudy;
+        if(oldStudy.getAuthor().getEmail().equals(principal.getName())) {
+            newStudy = Study.builder()
+                    .id(oldStudy.getId())
+                    .mainPost(mainPost)
+                    .title(update.getTitle())
+                    .author(oldStudy.getAuthor())
+                    .context(update.getContext())
+                    .build();
+        } else {
+            throw new AuthorizationServiceException("Unauthorized access");
+        }
         studyRepository.save(newStudy);
         return this.findByMainPost(mainPostId);
     }
 
     // Delete
+    @Transactional
     public ResponseEntity<String> delete(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));

@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class StudyDTO {
@@ -21,8 +20,6 @@ public class StudyDTO {
         private Long mainPostId;
         @Schema(description = "Title", defaultValue = "Test study Title")
         private String title;
-        @Schema(description = "Username(email)", defaultValue = "testuser@gmail.com")
-        private String author;
         @Schema(description = "Context", defaultValue = "Test study Context")
         private String context;
     }
@@ -34,6 +31,8 @@ public class StudyDTO {
         private Long id;
         @Schema(description = "Title")
         private String title;
+        @Schema(description = "Email")
+        private String author;
         @Schema(description = "Nickname")
         private String nickname;
         @Schema(description = "Context")
@@ -43,6 +42,7 @@ public class StudyDTO {
         public Response(Study study) {
             this.id = study.getId();
             this.title = study.getTitle();
+            this.author = study.getAuthor().getEmail();
             this.nickname = study.getAuthor().getNickname();
             this.context = study.getContext();
             this.modifiedDate = study.getModifiedDate();

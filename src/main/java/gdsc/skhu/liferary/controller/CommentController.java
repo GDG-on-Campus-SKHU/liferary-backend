@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "Comment", description = "API for comment")
@@ -29,8 +30,8 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/new")
-    public ResponseEntity<CommentDTO.Response> save(@RequestBody CommentDTO.Request request) {
-        return ResponseEntity.ok(commentService.save(request));
+    public ResponseEntity<CommentDTO.Response> save(Principal principal, @RequestBody CommentDTO.Request request) {
+        return ResponseEntity.ok(commentService.save(principal, request));
     }
 
     @Operation(summary = "reply comment", description = "Create reply comment")
@@ -39,8 +40,8 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/reply")
-    public ResponseEntity<CommentDTO.Response> reply(@RequestBody CommentDTO.Reply reply) {
-        return ResponseEntity.ok(commentService.reply(reply));
+    public ResponseEntity<CommentDTO.Response> reply(Principal principal, @RequestBody CommentDTO.Reply reply) {
+        return ResponseEntity.ok(commentService.reply(principal, reply));
     }
 
     // Read
@@ -63,10 +64,10 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping("/{boardPostId}/comment/{id}")
-    public ResponseEntity<CommentDTO.Response> update(@RequestBody CommentDTO.Update update,
+    public ResponseEntity<CommentDTO.Response> update(Principal principal, @RequestBody CommentDTO.Update update,
                                                       @PathVariable("boardPostId") Long mainPostId,
                                                       @PathVariable("id") Long id) {
-        return ResponseEntity.ok(commentService.update(update, mainPostId, id));
+        return ResponseEntity.ok(commentService.update(principal, update, mainPostId, id));
     }
 
     // Delete

@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -24,11 +26,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 public class MemberController {
-
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
 
-
+    // Create
     @Operation(summary = "create member", description = "Create member")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -62,7 +63,6 @@ public class MemberController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
-
             /* 입력한 내용을 유지하고자 응답 DTO에 담아서 보냄 */
             return ResponseEntity.badRequest().body(new MemberDTO.Response(joinDto.toEntity()));
         }
@@ -81,18 +81,24 @@ public class MemberController {
 
     @PostMapping("/reissue")
     public ResponseEntity<TokenDTO> reissue(@RequestHeader("RefreshToken") String refreshToken) {
-        return ResponseEntity.ok(memberService.reissue(refreshToken));
+        return ResponseEntity.ok(tokenProvider.reissue(refreshToken));
     }
 
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String accessToken,
                        @RequestHeader("RefreshToken") String refreshToken) {
-        String username = tokenProvider.getUsername(resolveToken(accessToken));
+        String username = tokenProvider.getUsername(tokenProvider.resolveToken(accessToken));
         memberService.logout(TokenDTO.of(accessToken, refreshToken), username);
     }
 
-    private String resolveToken(String accessToken) {
-        return accessToken.substring(7);
+    @Operation(summary = "user info", description = "Read user info")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/info")
+    public MemberDTO.Response getInfo(Principal principal) {
+        return memberService.findByEmail(principal.getName());
     }
 
     @Operation(summary = "delete member", description = "Delete member")
