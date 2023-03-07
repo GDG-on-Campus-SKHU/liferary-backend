@@ -93,9 +93,11 @@ public class BoardPostService {
                 newBoardPost.getImages().add(image.getImagePath());
             }
         }
-        boardPostRepository.save(newBoardPost);
-        for(int i = 0; i < newBoardPost.getImages().size(); i++) {
-            newBoardPost.getImages().set(i, imageService.findByStoredImageName(newBoardPost.getImages().get(i)).getImagePath());
+        newBoardPost = boardPostRepository.save(newBoardPost);
+        if(newBoardPost.getImages() != null) {
+            for(int i = 0; i < newBoardPost.getImages().size(); i++) {
+                newBoardPost.getImages().set(i, imageService.findByStoredImageName(newBoardPost.getImages().get(i)).getImagePath());
+            }
         }
         return this.findById(newBoardPost.getMainPost().getId(), id);
     }
