@@ -96,5 +96,20 @@ public class MemberDTO {
             this.firebaseAuth = member.isFirebaseAuth();
         }
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "Member.Update")
+    public static class Update {
+        @Schema(description = "Nickname", defaultValue = "Modified Nickname")
+        private String nickname;
+        @Schema(description = "Password", defaultValue = "Modified Password")
+        private String password;
+        @Schema(description = "CheckedPassword", defaultValue = "Modified CheckedPassword")
+        private String checkedpassword;
+    }
 }
 
