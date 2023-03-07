@@ -88,8 +88,12 @@ public class StudyService {
                 newStudy.getImages().add(image.getStoredImageName());
             }
         }
-
-        studyRepository.save(newStudy);
+        newStudy = studyRepository.save(newStudy);
+        if(newStudy.getImages() != null) {
+            for(int i = 0; i < newStudy.getImages().size(); i++) {
+                newStudy.getImages().set(i, imageService.findByStoredImageName(newStudy.getImages().get(i)).getImagePath());
+            }
+        }
         return this.findByMainPost(mainPostId);
     }
 

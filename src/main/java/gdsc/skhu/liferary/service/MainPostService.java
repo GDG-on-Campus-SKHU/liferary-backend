@@ -48,8 +48,10 @@ public class MainPostService {
             }
         }
         mainPost = mainPostRepository.save(mainPost);
-        for(int i = 0; i < mainPost.getImages().size(); i++) {
-            mainPost.getImages().set(i, imageService.findByStoredImageName(mainPost.getImages().get(i)).getImagePath());
+        if(mainPost.getImages() != null) {
+            for(int i = 0; i < mainPost.getImages().size(); i++) {
+                mainPost.getImages().set(i, imageService.findByStoredImageName(mainPost.getImages().get(i)).getImagePath());
+            }
         }
         return new MainPostDTO.Response(mainPostRepository.save(mainPost));
     }
@@ -96,8 +98,10 @@ public class MainPostService {
             }
         }
         newMainPost = mainPostRepository.save(newMainPost);
-        for(int i = 0; i < newMainPost.getImages().size(); i++) {
-            newMainPost.getImages().set(i, imageService.findByStoredImageName(newMainPost.getImages().get(i)).getImagePath());
+        if(newMainPost.getImages() != null) {
+            for(int i = 0; i < newMainPost.getImages().size(); i++) {
+                newMainPost.getImages().set(i, imageService.findByStoredImageName(newMainPost.getImages().get(i)).getImagePath());
+            }
         }
         return this.findById(id);
     }
