@@ -3,9 +3,12 @@ package gdsc.skhu.liferary.service;
 import gdsc.skhu.liferary.configure.cache.CacheKey;
 import com.google.firebase.auth.FirebaseToken;
 
+import gdsc.skhu.liferary.domain.Category;
+import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.domain.LogoutAccessToken;
+import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.LogoutAccessTokenRedisRepository;
 import gdsc.skhu.liferary.token.TokenProvider;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -26,10 +30,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +46,7 @@ public class MemberService {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
 
-    //user 회원가입
+    //User Join
     @Transactional
     public MemberDTO.Response join(MemberDTO.@Valid Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
@@ -58,7 +62,7 @@ public class MemberService {
                 .orElseThrow(() -> new NoSuchElementException("Member not found")));
     }
 
-    //admin 회원가입
+    //Admin Join
     @Transactional
     public MemberDTO.Response joinAdmin(MemberDTO.Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
@@ -86,7 +90,7 @@ public class MemberService {
         return validatorResult;
     }
 
-    //로그인
+    //Login
     @Transactional
     public TokenDTO login(MemberDTO.Login login) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword());
@@ -94,7 +98,7 @@ public class MemberService {
         return tokenProvider.createToken(authentication);
     }
     
-    //firebase Login
+    //Firebase Login
     @Transactional
     public MemberDTO.Response login(FirebaseToken firebaseToken) {
         if(memberRepository.findByEmail(firebaseToken.getEmail()).isPresent()) {
@@ -112,17 +116,6 @@ public class MemberService {
                 .build());
     }
 
-    @Transactional(readOnly = true)
-    public MemberDTO.Login findById(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Member not found"));
-        return MemberDTO.Login.builder()
-                .email(member.getEmail())
-                .password(member.getPassword())
-                .build();
-    }
-
-    // Firebase
     public MemberDTO.Response findByEmail(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException("Member not found"));
@@ -139,6 +132,30 @@ public class MemberService {
         return ResponseEntity.ok("Logout success");
     }
 
+    //Update
+    @Transactional
+    public MemberDTO.Response update(Principal principal, MemberDTO.Update update) throws IOException {
+        Member preMember = memberRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new NoSuchElementException("Not found Member"));
+        Member modMember;
+        modMember = Member.builder()
+                .id(preMember.getId())
+                .email(preMember.getEmail())
+                .authority(preMember.getAuthority())
+                .nickname(update.getNickname())
+                .password(passwordEncoder.encode(update.getPassword()))
+                .build();
+
+        if(update.getPassword().equals(update.getCheckedpassword())){
+            memberRepository.save(modMember);
+        } else {
+            throw new IllegalArgumentException("Password check failed");
+        }
+        return this.findByEmail(principal.getName());
+    }
+
+
+    //Delete
     @CacheEvict(value = CacheKey.USER, key = "#p1")
     public ResponseEntity<String> withdraw(String withdrawPassword, String email) {
         Member member = memberRepository.findByEmail(email)
