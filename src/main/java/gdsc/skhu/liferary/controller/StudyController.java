@@ -38,8 +38,8 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{mainPostId}")
-    public StudyDTO.Response findByMainPost(@PathVariable("mainPostId") Long mainPostId) {
+    @GetMapping("/study")
+    public StudyDTO.Response findByMainPost(@RequestParam("mainPost") Long mainPostId) {
         return studyService.findByMainPost(mainPostId);
     }
 
@@ -49,10 +49,10 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping(value = "/{mainPostId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/study", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudyDTO.Response> update(Principal principal,
                                                     @ModelAttribute StudyDTO.Update update,
-                                                    @PathVariable("mainPostId") Long mainPostId) throws IOException {
+                                                    @RequestParam("mainPost") Long mainPostId) throws IOException {
         return ResponseEntity.ok(studyService.update(principal, update, mainPostId));
     }
 
@@ -62,8 +62,8 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @DeleteMapping("/{mainPostId}")
-    public ResponseEntity<String> delete(@PathVariable("mainPostId") Long mainPostId) {
+    @DeleteMapping("/study")
+    public ResponseEntity<String> delete(@RequestParam("mainPost") Long mainPostId) {
         return studyService.delete(mainPostId);
     }
 }

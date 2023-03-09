@@ -42,9 +42,9 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{mainPostId}/page/{pageNumber}")
+    @GetMapping("/{mainPostId}/page")
     public Page<BoardPostDTO.Response> findByMainPost(@PathVariable("mainPostId") Long mainPostId,
-                                                      @PathVariable("pageNumber") Integer pageNumber) {
+                                                      @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return boardPostService.findByMainPost(pageable, mainPostId);
     }
@@ -54,9 +54,9 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{mainPostId}/post/{id}")
+    @GetMapping("/{mainPostId}/post")
     public BoardPostDTO.Response findById(@PathVariable("mainPostId") Long mainPostId,
-                                          @PathVariable("id") Long id) {
+                                          @RequestParam("id") Long id) {
         return boardPostService.findById(mainPostId, id);
     }
 
@@ -65,10 +65,10 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{mainPostId}/{keyword}/page/{pageNumber}")
+    @GetMapping("/{mainPostId}/{keyword}/page")
     public Page<BoardPostDTO.Response> findByMainPostAndKeyword(@PathVariable("mainPostId") Long mainPostId,
                                                       @PathVariable("keyword") String keyword,
-                                                      @PathVariable("pageNumber") Integer pageNumber) {
+                                                      @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return boardPostService.findByMainPostAndKeyword(pageable, mainPostId, keyword);
     }
@@ -79,11 +79,11 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/{mainPostId}/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{mainPostId}/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BoardPostDTO.Response> update(Principal principal,
                                                         @ModelAttribute BoardPostDTO.Update update,
                                                         @PathVariable(name = "mainPostId") Long mainPostId,
-                                                        @PathVariable(name = "id") Long id) throws IOException {
+                                                        @RequestParam(name = "id") Long id) throws IOException {
         return ResponseEntity.ok(boardPostService.update(principal, update, mainPostId, id));
     }
 
@@ -93,9 +93,9 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @DeleteMapping("/{mainPostId}/post/{id}")
+    @DeleteMapping("/{mainPostId}/post")
     public ResponseEntity<String> delete(@PathVariable("mainPostId") Long mainPostId,
-                                         @PathVariable("id") Long id) {
+                                         @RequestParam("id") Long id) {
         return boardPostService.delete(mainPostId, id);
     }
 }

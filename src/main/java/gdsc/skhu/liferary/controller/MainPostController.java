@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -43,8 +42,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<MainPostDTO.Response> findById(@PathVariable("id") Long id) {
+    @GetMapping("/post")
+    public ResponseEntity<MainPostDTO.Response> findById(@RequestParam("id") Long id) {
         return ResponseEntity.ok(mainPostService.findById(id));
     }
 
@@ -53,7 +52,7 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{category}")
+    @GetMapping("/category/{category}/page")
     public Page<MainPostDTO.Response> findByCategory(@PathVariable("category") String category,
                                                       @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
@@ -65,8 +64,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/keyword")
-    public Page<MainPostDTO.Response> findByKeyword(@RequestParam("keyword") String keyword,
+    @GetMapping("/keyword/{keyword}/page")
+    public Page<MainPostDTO.Response> findByKeyword(@PathVariable("keyword") String keyword,
                                                     @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return mainPostService.findByKeyword(pageable, keyword);
@@ -89,10 +88,10 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MainPostDTO.Response> update(Principal principal,
                                                        @ModelAttribute MainPostDTO.Update update,
-                                                       @PathVariable("id") Long id) throws IOException {
+                                                       @RequestParam("id") Long id) throws IOException {
         return ResponseEntity.ok(mainPostService.update(principal, update, id));
     }
 
@@ -102,8 +101,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
+    @DeleteMapping("/post")
+    public ResponseEntity<String> delete(@RequestParam("id") Long id) {
         return mainPostService.delete(id);
     }
 }
