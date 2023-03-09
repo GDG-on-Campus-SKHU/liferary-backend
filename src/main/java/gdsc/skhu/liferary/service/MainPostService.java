@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.Category;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
@@ -20,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -41,34 +41,30 @@ public class MainPostService {
                 .images(new ArrayList<>())
                 .video(request.getVideo())
                 .build();
-        if(request.getImages() != null) {
-            for(MultipartFile file : request.getImages()) {
-                ImageDTO.Response image = imageService.uploadImage("main/", file);
-                mainPost.getImages().add(image.getStoredImageName());
-            }
-        }
-        mainPost = mainPostRepository.save(mainPost);
-        if(mainPost.getImages() != null) {
-            for(int i = 0; i < mainPost.getImages().size(); i++) {
-                mainPost.getImages().set(i, imageService.findByStoredImageName(mainPost.getImages().get(i)).getImagePath());
-            }
-        }
-        return new MainPostDTO.Response(mainPostRepository.save(mainPost));
+        saveWithImage(mainPost, request.getImages());
+        return new MainPostDTO.Response(mainPost);
     }
 
     // Read
-    @Transactional
+    @Transactional(readOnly = true)
     public MainPostDTO.Response findById(Long id) {
         return new MainPostDTO.Response(mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID")));
     }
 
+    @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findByCategory(Pageable pageable, String category) {
         return mainPostRepository.findByCategory(pageable, category).map(MainPostDTO.Response::new);
     }
 
+    @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findAll(Pageable pageable) {
         return mainPostRepository.findAll(pageable).map(MainPostDTO.Response::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MainPostDTO.Response> findByKeyword(Pageable pageable, String keyword) {
+        return mainPostRepository.findByTitleContainsOrContextContains(pageable, keyword, keyword).map(MainPostDTO.Response::new);
     }
 
     // Update
@@ -90,19 +86,7 @@ public class MainPostService {
         } else {
             throw new AuthorizationServiceException("Unauthorized access");
         }
-        
-        if(update.getImages() != null) {
-            for(MultipartFile file : update.getImages()) {
-                ImageDTO.Response image = imageService.uploadImage("main/", file);
-                newMainPost.getImages().add(image.getStoredImageName());
-            }
-        }
-        newMainPost = mainPostRepository.save(newMainPost);
-        if(newMainPost.getImages() != null) {
-            for(int i = 0; i < newMainPost.getImages().size(); i++) {
-                newMainPost.getImages().set(i, imageService.findByStoredImageName(newMainPost.getImages().get(i)).getImagePath());
-            }
-        }
+        saveWithImage(newMainPost, update.getImages());
         return this.findById(id);
     }
 
@@ -123,5 +107,19 @@ public class MainPostService {
             return new ResponseEntity<>("Exception occurred", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok("Delete success");
+    }
+
+    // Util
+    private void saveWithImage(MainPost mainPost, List<MultipartFile> images) throws IOException {
+        if(images != null) {
+            for(MultipartFile file : images) {
+                ImageDTO.Response image = imageService.uploadImage("main/", file);
+                mainPost.getImages().add(image.getStoredImageName());
+            }
+        }
+        mainPostRepository.save(mainPost);
+        if(mainPost.getImages() != null) {
+            mainPost.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
+        }
     }
 }

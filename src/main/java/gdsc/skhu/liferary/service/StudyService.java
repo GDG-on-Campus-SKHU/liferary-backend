@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -43,12 +44,7 @@ public class StudyService {
                 .context(request.getContext())
                 .images(new ArrayList<>())
                 .build();
-        if(request.getImages() != null) {
-            for(MultipartFile file : request.getImages()) {
-                ImageDTO.Response image = imageService.uploadImage("board/", file);
-                study.getImages().add(image.getImagePath());
-            }
-        }
+        saveWithImage(study, request.getImages());
         return new StudyDTO.Response(studyRepository.save(study));
     }
 
@@ -81,19 +77,7 @@ public class StudyService {
         } else {
             throw new AuthorizationServiceException("Unauthorized access");
         }
-
-        if(update.getImages() != null) {
-            for(MultipartFile file : update.getImages()) {
-                ImageDTO.Response image = imageService.uploadImage("main/", file);
-                newStudy.getImages().add(image.getStoredImageName());
-            }
-        }
-        newStudy = studyRepository.save(newStudy);
-        if(newStudy.getImages() != null) {
-            for(int i = 0; i < newStudy.getImages().size(); i++) {
-                newStudy.getImages().set(i, imageService.findByStoredImageName(newStudy.getImages().get(i)).getImagePath());
-            }
-        }
+        saveWithImage(newStudy, update.getImages());
         return this.findByMainPost(mainPostId);
     }
 
@@ -115,5 +99,19 @@ public class StudyService {
             return new ResponseEntity<>("Exception occurred", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok("Delete success");
+    }
+
+    // Util
+    private void saveWithImage(Study study, List<MultipartFile> images) throws IOException {
+        if(images != null) {
+            for(MultipartFile file : images) {
+                ImageDTO.Response image = imageService.uploadImage("study/", file);
+                study.getImages().add(image.getStoredImageName());
+            }
+        }
+        studyRepository.save(study);
+        if(study.getImages() != null) {
+            study.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
+        }
     }
 }
