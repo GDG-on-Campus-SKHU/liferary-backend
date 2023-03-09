@@ -49,7 +49,7 @@ public class BoardPostController {
         return boardPostService.findByMainPost(pageable, mainPostId);
     }
 
-    @Operation(summary = "get board posts by main post id", description = "Read board posts by main post id")
+    @Operation(summary = "get one board post by main post id", description = "Read one board post by main post id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
@@ -58,6 +58,19 @@ public class BoardPostController {
     public BoardPostDTO.Response findById(@PathVariable("mainPostId") Long mainPostId,
                                           @PathVariable("id") Long id) {
         return boardPostService.findById(mainPostId, id);
+    }
+
+    @Operation(summary = "get board posts by main post and keyword", description = "Read board posts by main post id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/{mainPostId}/{keyword}/page/{pageNumber}")
+    public Page<BoardPostDTO.Response> findByMainPostAndKeyword(@PathVariable("mainPostId") Long mainPostId,
+                                                      @PathVariable("keyword") String keyword,
+                                                      @PathVariable("pageNumber") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return boardPostService.findByMainPostAndKeyword(pageable, mainPostId, keyword);
     }
 
     // Update

@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -43,17 +43,12 @@ public class BoardPostService {
                 .context(request.getContext())
                 .images(new ArrayList<>())
                 .build();
-        if(request.getImages() != null) {
-            for(MultipartFile file : request.getImages()) {
-                ImageDTO.Response image = imageService.uploadImage("board/", file);
-                boardPost.getImages().add(image.getImagePath());
-            }
-        }
-        return new BoardPostDTO.Response(boardPostRepository.save(boardPost));
+        saveWithImage(boardPost, request.getImages());
+        return new BoardPostDTO.Response(boardPost);
     }
 
     //Read
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<BoardPostDTO.Response> findByMainPost(Pageable pageable, Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
@@ -61,10 +56,19 @@ public class BoardPostService {
                 .map(BoardPostDTO.Response::new);
     }
 
+    @Transactional(readOnly = true)
     public BoardPostDTO.Response findById(Long mainPostId, Long id) {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         return new BoardPostDTO.Response(boardPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Board post with this ID")));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BoardPostDTO.Response> findByMainPostAndKeyword(Pageable pageable, Long mainPostId, String keyword) {
+        MainPost mainPost = mainPostRepository.findById(mainPostId)
+                .orElseThrow(() -> new NoSuchElementException("Main post not found"));
+        return boardPostRepository.findByMainPostAndTitleContainsOrContextContains(pageable, mainPost, keyword, keyword)
+                .map(BoardPostDTO.Response::new);
     }
 
     // Update
@@ -87,18 +91,7 @@ public class BoardPostService {
         } else {
             throw new AccessDeniedException("Unauthorized access");
         }
-        if(update.getImages() != null) {
-            for(MultipartFile file : update.getImages()) {
-                ImageDTO.Response image = imageService.uploadImage("/board/", file);
-                newBoardPost.getImages().add(image.getImagePath());
-            }
-        }
-        newBoardPost = boardPostRepository.save(newBoardPost);
-        if(newBoardPost.getImages() != null) {
-            for(int i = 0; i < newBoardPost.getImages().size(); i++) {
-                newBoardPost.getImages().set(i, imageService.findByStoredImageName(newBoardPost.getImages().get(i)).getImagePath());
-            }
-        }
+        saveWithImage(newBoardPost, update.getImages());
         return this.findById(newBoardPost.getMainPost().getId(), id);
     }
 
@@ -118,5 +111,19 @@ public class BoardPostService {
             return new ResponseEntity<>("Exception occurred", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok("Delete success");
+    }
+
+    // Util
+    private void saveWithImage(BoardPost boardPost, List<MultipartFile> images) throws IOException {
+        if(images != null) {
+            for (MultipartFile file : images) {
+                ImageDTO.Response image = imageService.uploadImage("board/", file);
+                boardPost.getImages().add(image.getStoredImageName());
+            }
+        }
+        boardPostRepository.save(boardPost);
+        if(boardPost.getImages() != null) {
+            boardPost.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
+        }
     }
 }

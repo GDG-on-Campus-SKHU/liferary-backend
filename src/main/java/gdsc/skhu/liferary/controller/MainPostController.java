@@ -53,11 +53,23 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/{category}/{pageNumber}")
+    @GetMapping("/{category}")
     public Page<MainPostDTO.Response> findByCategory(@PathVariable("category") String category,
-                                                      @PathVariable("pageNumber") Integer pageNumber) {
+                                                      @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return mainPostService.findByCategory(pageable, category);
+    }
+
+    @Operation(summary = "find main post by keyword", description = "Read main posts from database by keyword in title or context")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/keyword")
+    public Page<MainPostDTO.Response> findByKeyword(@RequestParam("keyword") String keyword,
+                                                    @RequestParam("page") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return mainPostService.findByKeyword(pageable, keyword);
     }
 
     @Operation(summary = "find main posts", description = "Read main posts from database")
@@ -65,8 +77,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/page/{pageNumber}")
-    public Page<MainPostDTO.Response> findAll(@PathVariable("pageNumber") Integer pageNumber) {
+    @GetMapping("/all")
+    public Page<MainPostDTO.Response> findAll(@RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return mainPostService.findAll(pageable);
     }
