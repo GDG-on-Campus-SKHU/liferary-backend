@@ -1,13 +1,12 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.Authority;
 import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.BoardPostRepository;
-import gdsc.skhu.liferary.repository.MainPostRepository;
+import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

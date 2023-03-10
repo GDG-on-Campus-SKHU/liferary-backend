@@ -1,6 +1,7 @@
 package gdsc.skhu.liferary.domain.DTO;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.querydsl.core.annotations.QueryProjection;
 import gdsc.skhu.liferary.domain.MainPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -53,6 +54,7 @@ public class MainPostDTO {
         @Schema(description = "Modified Date")
         private LocalDateTime modifiedDate;
 
+        @QueryProjection
         public Response(MainPost mainPost) {
             this.id = mainPost.getId();
             this.title = mainPost.getTitle();

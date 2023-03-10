@@ -5,7 +5,7 @@ import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.repository.BoardPostRepository;
-import gdsc.skhu.liferary.repository.MainPostRepository;
+import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
