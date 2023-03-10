@@ -1,11 +1,10 @@
 package gdsc.skhu.liferary.service;
 
-import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.StudyDTO;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Study;
-import gdsc.skhu.liferary.repository.MainPostRepository;
+import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import gdsc.skhu.liferary.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import java.security.Principal;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;

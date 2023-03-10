@@ -4,7 +4,7 @@ import gdsc.skhu.liferary.domain.Category;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.MainPost;
-import gdsc.skhu.liferary.repository.MainPostRepository;
+import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -64,7 +64,7 @@ public class MainPostService {
 
     @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findByKeyword(Pageable pageable, String keyword) {
-        return mainPostRepository.findByTitleContainsOrContextContains(pageable, keyword, keyword).map(MainPostDTO.Response::new);
+        return mainPostRepository.findByKeyword(pageable, keyword);
     }
 
     // Update
