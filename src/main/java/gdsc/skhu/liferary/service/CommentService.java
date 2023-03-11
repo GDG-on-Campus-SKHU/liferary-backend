@@ -3,7 +3,7 @@ package gdsc.skhu.liferary.service;
 import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.Comment;
 import gdsc.skhu.liferary.domain.DTO.CommentDTO;
-import gdsc.skhu.liferary.repository.BoardPostRepository;
+import gdsc.skhu.liferary.repository.boardpost.BoardPostRepository;
 import gdsc.skhu.liferary.repository.CommentRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

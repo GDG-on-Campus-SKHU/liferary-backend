@@ -4,7 +4,7 @@ import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.MainPost;
-import gdsc.skhu.liferary.repository.BoardPostRepository;
+import gdsc.skhu.liferary.repository.boardpost.BoardPostRepository;
 import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,8 +67,7 @@ public class BoardPostService {
     public Page<BoardPostDTO.Response> findByMainPostAndKeyword(Pageable pageable, Long mainPostId, String keyword) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
-        return boardPostRepository.findByMainPostAndTitleContainsOrContextContains(pageable, mainPost, keyword, keyword)
-                .map(BoardPostDTO.Response::new);
+        return boardPostRepository.findByKeyword(pageable, mainPost, keyword);
     }
 
     // Update

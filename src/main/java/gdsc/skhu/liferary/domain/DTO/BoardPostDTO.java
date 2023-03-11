@@ -1,5 +1,6 @@
 package gdsc.skhu.liferary.domain.DTO;
 
+import com.querydsl.core.annotations.QueryProjection;
 import gdsc.skhu.liferary.domain.BoardPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -49,6 +50,7 @@ public class BoardPostDTO {
         @Schema(description = "Modified Date")
         private LocalDateTime modifiedDate;
 
+        @QueryProjection
         public Response(BoardPost boardPost) {
             this.id = boardPost.getId();
             this.title = boardPost.getTitle();
