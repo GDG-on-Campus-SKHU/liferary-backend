@@ -1,5 +1,6 @@
 package gdsc.skhu.liferary.repository.mainpost;
 
+import gdsc.skhu.liferary.domain.Category;
 import gdsc.skhu.liferary.domain.MainPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MainPostRepository extends JpaRepository<MainPost, Long>, MainPostCustomRepository {
-    Page<MainPost> findByCategory(Pageable pageable, String category);
+    Page<MainPost> findByCategory(Pageable pageable, Category category);
 }
