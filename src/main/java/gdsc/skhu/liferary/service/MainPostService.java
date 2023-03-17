@@ -54,7 +54,7 @@ public class MainPostService {
 
     @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findByCategory(Pageable pageable, String category) {
-        return mainPostRepository.findByCategory(pageable, category).map(MainPostDTO.Response::new);
+        return mainPostRepository.findByCategory(pageable, Category.valueOf(category.toUpperCase())).map(MainPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
