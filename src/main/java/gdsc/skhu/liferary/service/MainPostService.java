@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,10 +32,10 @@ public class MainPostService {
 
     // Create
     @Transactional
-    public MainPostDTO.Response save(Principal principal, MainPostDTO.Request request) throws IOException {
+    public MainPostDTO.Response save(String username, MainPostDTO.Request request) throws IOException {
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
-                .author(memberRepository.findByEmail(principal.getName())
+                .author(memberRepository.findByEmail(username)
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .category(Category.valueOf(request.getCategory().toUpperCase()))
                 .context(request.getContext())
@@ -76,11 +77,11 @@ public class MainPostService {
 
     // Update
     @Transactional
-    public MainPostDTO.Response update(Principal principal, MainPostDTO.Update update, Long id) throws IOException {
+    public MainPostDTO.Response update(String username, MainPostDTO.Update update, Long id) throws IOException {
         MainPost oldMainPost = mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID"));
         MainPost newMainPost;
-        if(principal.getName().equals(oldMainPost.getAuthor().getEmail())) {
+        if(username.equals(oldMainPost.getAuthor().getEmail())) {
             newMainPost = MainPost.builder()
                     .id(id)
                     .title(update.getTitle())

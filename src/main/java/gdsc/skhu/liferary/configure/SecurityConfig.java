@@ -33,24 +33,10 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
     private static final String[] PERMITTED_URLS = {
-            /* Swagger v2 */
-            "/v2/api-docs",
-            "/v2/api-docs/**",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            /* Swagger v3 */
-            "/api-docs/**",
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            /* Login API */
-            "/api/member/**",
-            "/api/firebase/**",
-            /* Static objects */
-            "/favicon.ico"
+            "/api/main/**",
+            "/api/board/**",
+            "/api/study/**",
+            "/api/comment/**"
     };
 
     @Bean
@@ -67,11 +53,11 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(PERMITTED_URLS).permitAll()
+                .antMatchers(HttpMethod.GET, PERMITTED_URLS).permitAll()
                 .anyRequest().authenticated();
 
         http
-                .addFilterBefore(new JwtFilter(tokenProvider,logoutAccessTokenRedisRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider, tokenUserDetailsService, logoutAccessTokenRedisRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new FirebaseFilter(tokenUserDetailsService, tokenProvider), JwtFilter.class);
         return http.build();
     }
