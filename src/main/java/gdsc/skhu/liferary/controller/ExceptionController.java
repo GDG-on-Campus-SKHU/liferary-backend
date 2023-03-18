@@ -1,6 +1,7 @@
 package gdsc.skhu.liferary.controller;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,8 +33,8 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<String> expiredJwtExceptionHandler(ExpiredJwtException exception){
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<String> expiredJwtExceptionHandler(JwtException exception){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
     }
 
