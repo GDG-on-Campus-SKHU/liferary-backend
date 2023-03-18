@@ -21,6 +21,9 @@ public class JwtFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if(request.getAttribute("isFirebaseToken").equals(true)) {
+            chain.doFilter(request, response);
+        }
         String token = tokenProvider.resolveToken((HttpServletRequest) request); //request header에서 jwt 토큰 추출
         if (token != null) {
             checkLogout(token);
