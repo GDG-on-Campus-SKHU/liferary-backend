@@ -16,6 +16,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -94,14 +95,17 @@ public class TokenProvider {
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
+            throw new JwtException("Invalid JWT Token");
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
+            throw new JwtException("Expired JWT Token");
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
+            throw new JwtException("Unsupported JWT Token");
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            log.info("Claims not found JWT Token", e);
+            throw new JwtException("Claims not found JWT Token");
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

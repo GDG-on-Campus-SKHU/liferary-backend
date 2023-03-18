@@ -47,19 +47,26 @@ public class MainPostService {
 
     // Read
     @Transactional(readOnly = true)
+    public Page<MainPostDTO.Response> findAll(Pageable pageable) {
+        return mainPostRepository.findAll(pageable).map(MainPostDTO.Response::new);
+    }
+
+    @Transactional(readOnly = true)
     public MainPostDTO.Response findById(Long id) {
         return new MainPostDTO.Response(mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID")));
     }
 
     @Transactional(readOnly = true)
-    public Page<MainPostDTO.Response> findByCategory(Pageable pageable, String category) {
-        return mainPostRepository.findByCategory(pageable, Category.valueOf(category.toUpperCase())).map(MainPostDTO.Response::new);
+    public Page<MainPostDTO.Response> findByMember(Pageable pageable, String email) {
+        return mainPostRepository.findByAuthor(pageable, memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("Member not found")))
+                .map(MainPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
-    public Page<MainPostDTO.Response> findAll(Pageable pageable) {
-        return mainPostRepository.findAll(pageable).map(MainPostDTO.Response::new);
+    public Page<MainPostDTO.Response> findByCategory(Pageable pageable, String category) {
+        return mainPostRepository.findByCategory(pageable, Category.valueOf(category.toUpperCase())).map(MainPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)

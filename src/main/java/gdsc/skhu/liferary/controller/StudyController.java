@@ -7,6 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +42,18 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/study")
+    @GetMapping("/all")
+    public Page<StudyDTO.Response> findAll(@RequestParam("page") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return studyService.findAll(pageable);
+    }
+
+    @Operation(summary = "get study by main post id", description = "Read study by main post id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping
     public StudyDTO.Response findByMainPost(@RequestParam("mainPost") Long mainPostId) {
         return studyService.findByMainPost(mainPostId);
     }
@@ -49,7 +64,7 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping(value = "/study", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudyDTO.Response> update(Principal principal,
                                                     @ModelAttribute StudyDTO.Update update,
                                                     @RequestParam("mainPost") Long mainPostId) throws IOException {
@@ -62,7 +77,7 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @DeleteMapping("/study")
+    @DeleteMapping
     public ResponseEntity<String> delete(@RequestParam("mainPost") Long mainPostId) {
         return studyService.delete(mainPostId);
     }

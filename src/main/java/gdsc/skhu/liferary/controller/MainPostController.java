@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -47,12 +49,24 @@ public class MainPostController {
         return ResponseEntity.ok(mainPostService.findById(id));
     }
 
+    @Operation(summary = "find main post by current member", description = "Read main post from database by current member")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/post/member")
+    public Page<MainPostDTO.Response> findByMember(@AuthenticationPrincipal User user,
+                                                   @RequestParam("page") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return mainPostService.findByMember(pageable, user.getUsername());
+    }
+
     @Operation(summary = "find main post by category", description = "Read main posts from database by category")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/category/{category}/page")
+    @GetMapping("/category/{category}")
     public Page<MainPostDTO.Response> findByCategory(@PathVariable("category") String category,
                                                       @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
@@ -64,7 +78,7 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/keyword/{keyword}/page")
+    @GetMapping("/keyword/{keyword}")
     public Page<MainPostDTO.Response> findByKeyword(@PathVariable("keyword") String keyword,
                                                     @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());

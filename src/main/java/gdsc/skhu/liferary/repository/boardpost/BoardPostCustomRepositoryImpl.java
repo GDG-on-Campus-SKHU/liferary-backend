@@ -31,6 +31,9 @@ public class BoardPostCustomRepositoryImpl implements BoardPostCustomRepository 
                                 .or(boardPost.context.containsIgnoreCase(keyword))
                         )
                 )
+                .orderBy(
+                        boardPost.id.desc()
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
