@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -34,8 +35,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MainPostDTO.Response> save(Principal principal, @ModelAttribute MainPostDTO.Request request) throws IOException {
-        return ResponseEntity.ok(mainPostService.save(principal, request));
+    public ResponseEntity<MainPostDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails, @ModelAttribute MainPostDTO.Request request) throws IOException {
+        return ResponseEntity.ok(mainPostService.save(userDetails.getUsername(), request));
     }
 
     // Read
@@ -103,10 +104,10 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MainPostDTO.Response> update(Principal principal,
+    public ResponseEntity<MainPostDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
                                                        @ModelAttribute MainPostDTO.Update update,
                                                        @RequestParam("id") Long id) throws IOException {
-        return ResponseEntity.ok(mainPostService.update(principal, update, id));
+        return ResponseEntity.ok(mainPostService.update(userDetails.getUsername(), update, id));
     }
 
     // Delete

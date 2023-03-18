@@ -33,11 +33,10 @@ public class FirebaseFilter extends GenericFilterBean {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("isFirebaseToken", true);
+            chain.doFilter(request, response);
         } catch (NoSuchElementException | IllegalArgumentException e) {
             request.setAttribute("isFirebaseToken", false);
             chain.doFilter(request, response);
-            return;
         }
-        chain.doFilter(request, response);
     }
 }
