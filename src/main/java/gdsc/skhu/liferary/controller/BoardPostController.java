@@ -73,6 +73,17 @@ public class BoardPostController {
         return boardPostService.findByMainPostAndKeyword(pageable, mainPostId, keyword);
     }
 
+    @Operation(summary = "find all board posts", description = "Read all board posts from database")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/all")
+    public Page<BoardPostDTO.Response> findAll(@RequestParam("page") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return boardPostService.findAll(pageable);
+    }
+
     // Update
     @Operation(summary = "Update board post", description = "Update board post")
     @ApiResponses({

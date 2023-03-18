@@ -8,6 +8,8 @@ import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import gdsc.skhu.liferary.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -47,6 +49,11 @@ public class StudyService {
     }
 
     // Read
+    @Transactional(readOnly = true)
+    public Page<StudyDTO.Response> findAll(Pageable pageable) {
+        return studyRepository.findAll(pageable).map(StudyDTO.Response::new);
+    }
+
     @Transactional
     public StudyDTO.Response findByMainPost(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)

@@ -49,6 +49,11 @@ public class BoardPostService {
 
     //Read
     @Transactional(readOnly = true)
+    public Page<BoardPostDTO.Response> findAll(Pageable pageable) {
+        return boardPostRepository.findAll(pageable).map(BoardPostDTO.Response::new);
+    }
+
+    @Transactional(readOnly = true)
     public Page<BoardPostDTO.Response> findByMainPost(Pageable pageable, Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));

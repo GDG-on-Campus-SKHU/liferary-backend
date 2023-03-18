@@ -26,6 +26,9 @@ public class MainPostCustomRepositoryImpl implements MainPostCustomRepository {
                 .where(mainPost.title.containsIgnoreCase(keyword)
                         .or(mainPost.context.containsIgnoreCase(keyword))
                 )
+                .orderBy(
+                        mainPost.id.desc()
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
