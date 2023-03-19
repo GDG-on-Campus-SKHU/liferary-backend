@@ -10,5 +10,6 @@ public enum Category {
     MAKEUP,
     FASHION,
     LEISURE,
-    TRAVEL
+    TRAVEL,
+    ETC
 }
