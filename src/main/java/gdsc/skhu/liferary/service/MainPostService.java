@@ -12,13 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -59,8 +57,8 @@ public class MainPostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MainPostDTO.Response> findByMember(Pageable pageable, String email) {
-        return mainPostRepository.findByAuthor(pageable, memberRepository.findByEmail(email)
+    public Page<MainPostDTO.Response> findByMember(Pageable pageable, String username) {
+        return mainPostRepository.findByAuthor(pageable, memberRepository.findByEmail(username)
                 .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .map(MainPostDTO.Response::new);
     }

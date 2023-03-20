@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,8 +32,9 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/new")
-    public ResponseEntity<CommentDTO.Response> save(Principal principal, @RequestBody CommentDTO.Request request) {
-        return ResponseEntity.ok(commentService.save(principal, request));
+    public ResponseEntity<CommentDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails,
+                                                    @RequestBody CommentDTO.Request request) {
+        return ResponseEntity.ok(commentService.save(userDetails.getUsername(), request));
     }
 
     @Operation(summary = "reply comment", description = "Create reply comment")
@@ -40,8 +43,9 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping("/reply")
-    public ResponseEntity<CommentDTO.Response> reply(Principal principal, @RequestBody CommentDTO.Reply reply) {
-        return ResponseEntity.ok(commentService.reply(principal, reply));
+    public ResponseEntity<CommentDTO.Response> reply(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestBody CommentDTO.Reply reply) {
+        return ResponseEntity.ok(commentService.reply(userDetails.getUsername(), reply));
     }
 
     // Read
@@ -64,10 +68,11 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping("/{boardPostId}/comment/{id}")
-    public ResponseEntity<CommentDTO.Response> update(Principal principal, @RequestBody CommentDTO.Update update,
-                                                        @PathVariable("boardPostId") Long mainPostId,
-                                                        @PathVariable("id") Long id) {
-        return ResponseEntity.ok(commentService.update(principal, update, mainPostId, id));
+    public ResponseEntity<CommentDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
+                                                      @RequestBody CommentDTO.Update update,
+                                                      @PathVariable("boardPostId") Long mainPostId,
+                                                      @PathVariable("id") Long id) {
+        return ResponseEntity.ok(commentService.update(userDetails.getUsername(), update, mainPostId, id));
     }
 
     // Delete

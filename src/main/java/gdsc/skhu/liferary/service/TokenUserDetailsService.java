@@ -21,9 +21,9 @@ public class TokenUserDetailsService implements UserDetailsService {
     private final MemberService memberService;
 
     @Override
-    @Cacheable(value = CacheKey.USER, key = "#email", unless = "#result == null")
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(email)
+    @Cacheable(value = CacheKey.USER, key = "#username", unless = "#result == null")
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return memberRepository.findByEmail(username)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
     }
