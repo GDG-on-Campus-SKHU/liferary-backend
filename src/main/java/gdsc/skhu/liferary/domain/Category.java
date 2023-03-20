@@ -8,6 +8,7 @@ public enum Category {
     PROGRAMMING,
     LANGUAGE,
     MAKEUP,
+    MUSIC,
     FASHION,
     LEISURE,
     TRAVEL,
