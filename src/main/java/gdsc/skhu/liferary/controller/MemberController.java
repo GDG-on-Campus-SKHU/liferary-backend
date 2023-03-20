@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -100,8 +102,8 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @GetMapping("/info")
-    public MemberDTO.Response getInfo(Principal principal) {
-        return memberService.findByEmail(principal.getName());
+    public MemberDTO.Response getInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        return memberService.findByEmail(userDetails.getUsername());
     }
 
     //Update (회원수정)

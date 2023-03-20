@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -32,8 +34,9 @@ public class BoardPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BoardPostDTO.Response> save(Principal principal, @ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
-        return ResponseEntity.ok(boardPostService.save(principal, boardPostDTO));
+    public ResponseEntity<BoardPostDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails,
+                                                      @ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
+        return ResponseEntity.ok(boardPostService.save(userDetails.getUsername(), boardPostDTO));
     }
 
     // Read
@@ -67,8 +70,8 @@ public class BoardPostController {
     })
     @GetMapping("/{mainPostId}/{keyword}/page")
     public Page<BoardPostDTO.Response> findByMainPostAndKeyword(@PathVariable("mainPostId") Long mainPostId,
-                                                      @PathVariable("keyword") String keyword,
-                                                      @RequestParam("page") Integer pageNumber) {
+                                                                @PathVariable("keyword") String keyword,
+                                                                @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return boardPostService.findByMainPostAndKeyword(pageable, mainPostId, keyword);
     }
@@ -91,11 +94,11 @@ public class BoardPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(value = "/{mainPostId}/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BoardPostDTO.Response> update(Principal principal,
+    public ResponseEntity<BoardPostDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
                                                         @ModelAttribute BoardPostDTO.Update update,
                                                         @PathVariable(name = "mainPostId") Long mainPostId,
                                                         @RequestParam(name = "id") Long id) throws IOException {
-        return ResponseEntity.ok(boardPostService.update(principal, update, mainPostId, id));
+        return ResponseEntity.ok(boardPostService.update(userDetails.getUsername(), update, mainPostId, id));
     }
 
     // Delete

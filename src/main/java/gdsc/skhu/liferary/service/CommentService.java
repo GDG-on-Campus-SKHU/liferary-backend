@@ -27,11 +27,11 @@ public class CommentService {
 
     // Create
     @Transactional
-    public CommentDTO.Response save(Principal principal, CommentDTO.Request request) {
+    public CommentDTO.Response save(String username, CommentDTO.Request request) {
         Comment comment = Comment.builder()
                 .boardPost(boardPostRepository.findById(request.getBoardPostId())
                         .orElseThrow(() -> new NoSuchElementException("Board post not found")))
-                .writer(memberRepository.findByEmail(principal.getName())
+                .writer(memberRepository.findByEmail(username)
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .childComments(new ArrayList<>())
@@ -39,13 +39,13 @@ public class CommentService {
         return new CommentDTO.Response(commentRepository.save(comment));
     }
 
-    public CommentDTO.Response reply(Principal principal, CommentDTO.Reply reply) {
+    public CommentDTO.Response reply(String username, CommentDTO.Reply reply) {
         Comment comment = Comment.builder()
                 .boardPost(boardPostRepository.findById(reply.getBoardPostId())
                         .orElseThrow(() -> new NoSuchElementException("Board post not found")))
                 .parentComment(commentRepository.findById(reply.getParentCommentId())
                         .orElseThrow(() -> new NoSuchElementException("Comment not found")))
-                .writer(memberRepository.findByEmail(principal.getName())
+                .writer(memberRepository.findByEmail(username)
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(reply.getContext())
                 .childComments(new ArrayList<>())
@@ -73,12 +73,12 @@ public class CommentService {
     }
 
     //Update
-    public CommentDTO.Response update(Principal principal, CommentDTO.Update update, Long boardPostId, Long id) {
+    public CommentDTO.Response update(String username, CommentDTO.Update update, Long boardPostId, Long id) {
         boardPostRepository.findById(boardPostId)
                 .orElseThrow(() -> new NoSuchElementException("Board post not found"));
         Comment oldComment = this.findById(id);
         Comment newComment;
-        if(oldComment.getWriter().getEmail().equals(principal.getName())) {
+        if(oldComment.getWriter().getEmail().equals(username)) {
             newComment = Comment.builder()
                     .id(id)
                     .boardPost(oldComment.getBoardPost())
