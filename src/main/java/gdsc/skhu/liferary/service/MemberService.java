@@ -60,7 +60,7 @@ public class MemberService {
 
     //admin 회원가입
     @Transactional
-    public MemberDTO.Response joinAdmin(MemberDTO.Join joinRequestDto) {
+    public MemberDTO.Response joinAdmin(MemberDTO.@Valid Join joinRequestDto) {
         if (memberRepository.findByEmail(joinRequestDto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Duplicated email");
         }

@@ -33,12 +33,12 @@ public class BoardPostService {
 
     // Create
     @Transactional
-    public BoardPostDTO.Response save(Principal principal, BoardPostDTO.Request request) throws IOException {
+    public BoardPostDTO.Response save(String username, BoardPostDTO.Request request) throws IOException {
         BoardPost boardPost = BoardPost.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
                         .orElseThrow(() -> new NoSuchElementException("Main post not found")))
                 .title(request.getTitle())
-                .author(memberRepository.findByEmail(principal.getName())
+                .author(memberRepository.findByEmail(username)
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .images(new ArrayList<>())
@@ -77,12 +77,12 @@ public class BoardPostService {
 
     // Update
     @Transactional
-    public BoardPostDTO.Response update(Principal principal, BoardPostDTO.Update update, Long mainPostId, Long id) throws IOException {
+    public BoardPostDTO.Response update(String username, BoardPostDTO.Update update, Long mainPostId, Long id) throws IOException {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         BoardPost oldBoardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Board post with this ID"));
         BoardPost newBoardPost;
-        if(oldBoardPost.getAuthor().getEmail().equals(principal.getName())) {
+        if(oldBoardPost.getAuthor().getEmail().equals(username)) {
             newBoardPost = BoardPost.builder()
                     .id(id)
                     .mainPost(oldBoardPost.getMainPost())

@@ -34,12 +34,16 @@ public class StudyService {
 
     // Create
     @Transactional
-    public StudyDTO.Response save(Principal principal, StudyDTO.Request request) throws IOException {
+    public StudyDTO.Response save(String username, StudyDTO.Request request) throws IOException {
+        MainPost mainPost = mainPostRepository.findById(request.getMainPostId())
+                .orElseThrow(() -> new NoSuchElementException("Main post not found"));
+        if(studyRepository.findByMainPost(mainPost).isPresent()) {
+            throw new IllegalArgumentException("Study is already exist");
+        }
         Study study = Study.builder()
-                .mainPost(mainPostRepository.findById(request.getMainPostId())
-                        .orElseThrow(() -> new NoSuchElementException("Main post not found")))
+                .mainPost(mainPost)
                 .title(request.getTitle())
-                .author(memberRepository.findByEmail(principal.getName())
+                .author(memberRepository.findByEmail(username)
                         .orElseThrow(() -> new NoSuchElementException("Member not found")))
                 .context(request.getContext())
                 .images(new ArrayList<>())
@@ -64,13 +68,13 @@ public class StudyService {
 
     // Update
     @Transactional
-    public StudyDTO.Response update(Principal principal, StudyDTO.Update update, Long mainPostId) throws IOException {
+    public StudyDTO.Response update(String username, StudyDTO.Update update, Long mainPostId) throws IOException {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
         Study oldStudy = studyRepository.findByMainPost(mainPost)
                 .orElseThrow(() -> new NoSuchElementException("Study not found"));
         Study newStudy;
-        if(oldStudy.getAuthor().getEmail().equals(principal.getName())) {
+        if(oldStudy.getAuthor().getEmail().equals(username)) {
             newStudy = Study.builder()
                     .id(oldStudy.getId())
                     .mainPost(mainPost)

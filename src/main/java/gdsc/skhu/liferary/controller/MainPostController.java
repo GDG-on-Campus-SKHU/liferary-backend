@@ -35,7 +35,8 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MainPostDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails, @ModelAttribute MainPostDTO.Request request) throws IOException {
+    public ResponseEntity<MainPostDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @ModelAttribute MainPostDTO.Request request) throws IOException {
         return ResponseEntity.ok(mainPostService.save(userDetails.getUsername(), request));
     }
 
@@ -56,10 +57,10 @@ public class MainPostController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @GetMapping("/post/member")
-    public Page<MainPostDTO.Response> findByMember(@AuthenticationPrincipal User user,
+    public Page<MainPostDTO.Response> findByMember(@AuthenticationPrincipal UserDetails userDetails,
                                                    @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
-        return mainPostService.findByMember(pageable, user.getUsername());
+        return mainPostService.findByMember(pageable, userDetails.getUsername());
     }
 
     @Operation(summary = "find main post by category", description = "Read main posts from database by category")
@@ -69,7 +70,7 @@ public class MainPostController {
     })
     @GetMapping("/category/{category}")
     public Page<MainPostDTO.Response> findByCategory(@PathVariable("category") String category,
-                                                      @RequestParam("page") Integer pageNumber) {
+                                                     @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
         return mainPostService.findByCategory(pageable, category);
     }
