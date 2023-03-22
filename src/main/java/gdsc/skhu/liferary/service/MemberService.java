@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -31,8 +30,6 @@ import org.springframework.validation.FieldError;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -134,8 +131,8 @@ public class MemberService {
 
     //Update
     @Transactional
-    public MemberDTO.Response update(Principal principal, MemberDTO.Update update) throws IOException {
-        Member preMember = memberRepository.findByEmail(principal.getName())
+    public MemberDTO.Response update(String username, MemberDTO.Update update) throws IOException {
+        Member preMember = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new NoSuchElementException("Not found Member"));
         Member modMember;
         modMember = Member.builder()
@@ -146,12 +143,12 @@ public class MemberService {
                 .password(passwordEncoder.encode(update.getPassword()))
                 .build();
 
-        if(update.getPassword().equals(update.getCheckedpassword())){
+        if(update.getPassword().equals(update.getCheckedPassword())){
             memberRepository.save(modMember);
         } else {
             throw new IllegalArgumentException("Password check failed");
         }
-        return this.findByEmail(principal.getName());
+        return this.findByEmail(username);
     }
 
 
