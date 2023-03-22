@@ -1,6 +1,5 @@
 package gdsc.skhu.liferary.controller;
 
-import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.service.MemberService;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Map;
 
 @Tag(name = "Member", description = "API for authentication and authorization")
@@ -111,9 +110,9 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
     @PatchMapping
-    public ResponseEntity<MemberDTO.Response> update(Principal principal,
-                                                       @RequestBody MemberDTO.Update update) throws IOException {
-        return ResponseEntity.ok(memberService.update(principal, update));
+    public ResponseEntity<MemberDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestBody MemberDTO.Update update) throws IOException {
+        return ResponseEntity.ok(memberService.update(userDetails.getUsername(), update));
     }
 
 
