@@ -35,6 +35,8 @@ public class BoardPostDTO {
     public static class Response {
         @Schema(description = "ID")
         private Long id;
+        @Schema(description = "MainPost ID")
+        private Long mainPostId;
         @Schema(description = "Title")
         private String title;
         @Schema(description = "Email")
@@ -53,6 +55,7 @@ public class BoardPostDTO {
         @QueryProjection
         public Response(BoardPost boardPost) {
             this.id = boardPost.getId();
+            this.mainPostId = boardPost.getMainPost().getId();
             this.title = boardPost.getTitle();
             this.author = boardPost.getAuthor().getEmail();
             this.nickname = boardPost.getAuthor().getNickname();
