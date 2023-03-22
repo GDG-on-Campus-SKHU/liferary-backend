@@ -1,15 +1,14 @@
 package gdsc.skhu.liferary.repository.boardpost;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
-import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.DTO.QBoardPostDTO_Response;
-import gdsc.skhu.liferary.domain.DTO.QMainPostDTO_Response;
 import gdsc.skhu.liferary.domain.MainPost;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,6 +37,16 @@ public class BoardPostCustomRepositoryImpl implements BoardPostCustomRepository 
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(searchResult, pageable, searchResult.size());
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(boardPost.count())
+                .from(boardPost)
+                .where(boardPost.mainPost.eq(mainPost)
+                        .and(boardPost.title.containsIgnoreCase(keyword)
+                                .or(boardPost.context.containsIgnoreCase(keyword)))
+                ).orderBy(
+                        boardPost.id.desc()
+                );
+
+        return PageableExecutionUtils.getPage(searchResult, pageable, countQuery::fetchOne);
     }
 }
