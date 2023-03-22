@@ -109,7 +109,7 @@ public class MemberDTO {
         @Schema(description = "Password", defaultValue = "Modified Password")
         private String password;
         @Schema(description = "CheckedPassword", defaultValue = "Modified CheckedPassword")
-        private String checkedpassword;
+        private String checkedPassword;
     }
 }
 
