@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PROTECTED)
 @Builder
-public class Member {
+public class Member extends BaseTime{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
@@ -56,7 +56,6 @@ public class Member {
                 .build();
     }
 
-    //password 일치하는지 비교
     public boolean matchPassword(PasswordEncoder passwordEncoder, String withdrawPassword){
         return passwordEncoder.matches(withdrawPassword, getPassword());
     }

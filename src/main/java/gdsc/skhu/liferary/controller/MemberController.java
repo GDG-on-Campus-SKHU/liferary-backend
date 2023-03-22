@@ -1,5 +1,6 @@
 package gdsc.skhu.liferary.controller;
 
+import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.DTO.MemberDTO;
 import gdsc.skhu.liferary.domain.DTO.TokenDTO;
 import gdsc.skhu.liferary.service.MemberService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -91,6 +93,7 @@ public class MemberController {
         return memberService.logout(TokenDTO.of(accessToken, refreshToken), username);
     }
 
+    //Read (email, nickname)
     @Operation(summary = "user info", description = "Read user info")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -101,7 +104,20 @@ public class MemberController {
         return memberService.findByEmail(userDetails.getUsername());
     }
 
-    //withdraw (회원탈퇴)
+    //Update (회원수정)
+    @Operation(summary = "update member", description = "Update member")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @PatchMapping
+    public ResponseEntity<MemberDTO.Response> update(Principal principal,
+                                                       @RequestBody MemberDTO.Update update) throws IOException {
+        return ResponseEntity.ok(memberService.update(principal, update));
+    }
+
+
+    //Delete
     @Operation(summary = "delete member", description = "Delete member")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
