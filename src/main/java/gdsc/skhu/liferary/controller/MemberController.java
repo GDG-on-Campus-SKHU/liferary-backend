@@ -21,8 +21,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
-import java.security.Principal;
 import java.util.Map;
 
 @Tag(name = "Member", description = "API for authentication and authorization")
