@@ -96,7 +96,7 @@ public class StudyService {
             throw new AuthorizationServiceException("Unauthorized access");
         }
         saveWithImage(newStudy, update.getImages());
-        return this.findByMainPost(mainPostId);
+        return new StudyDTO.Response(newStudy);
     }
 
     // Delete

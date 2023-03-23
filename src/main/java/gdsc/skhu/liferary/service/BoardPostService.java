@@ -104,7 +104,7 @@ public class BoardPostService {
             throw new AccessDeniedException("Unauthorized access");
         }
         saveWithImage(newBoardPost, update.getImages());
-        return this.findById(newBoardPost.getMainPost().getId(), id);
+        return new BoardPostDTO.Response(newBoardPost);
     }
 
     @Transactional

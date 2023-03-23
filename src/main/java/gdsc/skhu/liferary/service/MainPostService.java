@@ -93,7 +93,7 @@ public class MainPostService {
             throw new AuthorizationServiceException("Unauthorized access");
         }
         saveWithImage(newMainPost, update.getImages());
-        return this.findById(id);
+        return new MainPostDTO.Response(newMainPost);
     }
 
     // Delete
