@@ -65,7 +65,7 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @GetMapping("/all")
+    @GetMapping("/member")
     public Page<StudyDTO.Response> findByMember(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestParam("page") Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
