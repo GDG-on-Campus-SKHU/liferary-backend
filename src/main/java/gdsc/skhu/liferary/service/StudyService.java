@@ -3,6 +3,7 @@ package gdsc.skhu.liferary.service;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.StudyDTO;
 import gdsc.skhu.liferary.domain.MainPost;
+import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.domain.Study;
 import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
@@ -58,12 +59,20 @@ public class StudyService {
         return studyRepository.findAll(pageable).map(StudyDTO.Response::new);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public StudyDTO.Response findByMainPost(Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
         return new StudyDTO.Response(studyRepository.findByMainPost(mainPost)
                 .orElseThrow(() -> new NoSuchElementException("Study not found")));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<StudyDTO.Response> findByMember(Pageable pageable, String username) {
+        Member member = memberRepository.findByEmail(username)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+        return studyRepository.findByAuthor(pageable, member)
+                .map(StudyDTO.Response::new);
     }
 
     // Update

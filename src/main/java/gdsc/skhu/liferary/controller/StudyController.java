@@ -60,6 +60,18 @@ public class StudyController {
         return studyService.findByMainPost(mainPostId);
     }
 
+    @Operation(summary = "get study by main post id", description = "Read study by main post id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/all")
+    public Page<StudyDTO.Response> findByMember(@AuthenticationPrincipal UserDetails userDetails,
+                                                @RequestParam("page") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return studyService.findByMember(pageable, userDetails.getUsername());
+    }
+
     // Update
     @Operation(summary = "Update study", description = "Update study")
     @ApiResponses({

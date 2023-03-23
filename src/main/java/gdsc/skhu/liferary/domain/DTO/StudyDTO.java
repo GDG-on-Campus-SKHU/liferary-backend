@@ -32,6 +32,8 @@ public class StudyDTO {
     public static class Response {
         @Schema(description = "ID")
         private Long id;
+        @Schema(description = "MainPost ID")
+        private Long mainPostId;
         @Schema(description = "Title")
         private String title;
         @Schema(description = "Email")
@@ -40,13 +42,14 @@ public class StudyDTO {
         private String nickname;
         @Schema(description = "Context")
         private String context;
-
         @Schema(description = "Image files", defaultValue = "")
         private List<String> images;
         @Schema(description = "Modified Date")
         private LocalDateTime modifiedDate;
+
         public Response(Study study) {
             this.id = study.getId();
+            this.mainPostId = study.getMainPost().getId();
             this.title = study.getTitle();
             this.author = study.getAuthor().getEmail();
             this.nickname = study.getAuthor().getNickname();

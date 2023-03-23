@@ -4,6 +4,7 @@ import gdsc.skhu.liferary.domain.BoardPost;
 import gdsc.skhu.liferary.domain.DTO.BoardPostDTO;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.MainPost;
+import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.boardpost.BoardPostRepository;
 import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -66,6 +66,14 @@ public class BoardPostService {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         return new BoardPostDTO.Response(boardPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Board post with this ID")));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BoardPostDTO.Response> findByMember(Pageable pageable, String username) {
+        Member member = memberRepository.findByEmail(username)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+        return boardPostRepository.findByAuthor(pageable, member)
+                .map(BoardPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
