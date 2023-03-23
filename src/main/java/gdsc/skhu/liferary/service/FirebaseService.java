@@ -18,7 +18,9 @@ public class FirebaseService {
     public String uploadToFirebase(String path, MultipartFile image) throws IOException {
         InputStream content = new ByteArrayInputStream(image.getBytes());
         Blob blob = firebaseBucket.create(path, content, image.getContentType());
-        return blob.getMediaLink();
+        String mediaLink = blob.getMediaLink();
+        return "https://firebasestorage.googleapis.com/v0/" +
+                mediaLink.substring(mediaLink.lastIndexOf("/b/") + 1);
     }
 
     public void deleteFromFirebase(String path) {
