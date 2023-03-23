@@ -62,6 +62,18 @@ public class BoardPostController {
         return boardPostService.findById(mainPostId, id);
     }
 
+    @Operation(summary = "get one board post by member email", description = "Read one board post by member email")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
+    @GetMapping("/member/page")
+    public Page<BoardPostDTO.Response> findByMember(@AuthenticationPrincipal UserDetails userDetails,
+                                                    @RequestParam("page") Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber == 0 ? 0 : pageNumber-1, 9, Sort.by("id").descending());
+        return boardPostService.findByMember(pageable, userDetails.getUsername());
+    }
+
     @Operation(summary = "get board posts by main post and keyword", description = "Read board posts by main post id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
