@@ -4,6 +4,7 @@ import gdsc.skhu.liferary.domain.Category;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
 import gdsc.skhu.liferary.domain.MainPost;
+import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
 import gdsc.skhu.liferary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,6 @@ public class MainPostService {
     private final ImageService imageService;
 
     // Create
-    @Transactional
     public MainPostDTO.Response save(String username, MainPostDTO.Request request) throws IOException {
         MainPost mainPost = MainPost.builder()
                 .title(request.getTitle())
@@ -47,30 +47,65 @@ public class MainPostService {
     // Read
     @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findAll(Pageable pageable) {
-        return mainPostRepository.findAll(pageable).map(MainPostDTO.Response::new);
+        return mainPostRepository.findAll(pageable).map(mainPost -> {
+            if(mainPost.getImages() != null) {
+                mainPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return mainPost;
+        }).map(MainPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
     public MainPostDTO.Response findById(Long id) {
-        return new MainPostDTO.Response(mainPostRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID")));
+        return new MainPostDTO.Response(mainPostRepository.findById(id).map(mainPost -> {
+            if(mainPost.getImages() != null) {
+                mainPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return mainPost;
+        }).orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID")));
     }
 
     @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findByMember(Pageable pageable, String username) {
-        return mainPostRepository.findByAuthor(pageable, memberRepository.findByEmail(username)
-                .orElseThrow(() -> new NoSuchElementException("Member not found")))
-                .map(MainPostDTO.Response::new);
+        Member member = memberRepository.findByEmail(username)
+                .orElseThrow(() -> new NoSuchElementException("Member not found"));
+        return mainPostRepository.findByAuthor(pageable, member).map(mainPost -> {
+            if(mainPost.getImages() != null) {
+                mainPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return mainPost;
+        }).map(MainPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findByCategory(Pageable pageable, String category) {
-        return mainPostRepository.findByCategory(pageable, Category.valueOf(category.toUpperCase())).map(MainPostDTO.Response::new);
+        return mainPostRepository.findByCategory(pageable, Category.valueOf(category.toUpperCase()))
+                .map(mainPost -> {
+                    if(mainPost.getImages() != null) {
+                        mainPost.getImages().replaceAll(
+                                storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                        );
+                    }
+                    return mainPost;
+                }).map(MainPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
     public Page<MainPostDTO.Response> findByKeyword(Pageable pageable, String keyword) {
-        return mainPostRepository.findByKeyword(pageable, keyword);
+        return mainPostRepository.findByKeyword(pageable, keyword).map(mainPost -> {
+            if(mainPost.getImages() != null) {
+                mainPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return mainPost;
+        });
     }
 
     // Update
@@ -117,13 +152,13 @@ public class MainPostService {
 
     // Util
     private void saveWithImage(MainPost mainPost, List<MultipartFile> images) throws IOException {
-        if(images != null) {
-            for(MultipartFile file : images) {
+        if (images != null) {
+            for (MultipartFile file : images) {
                 ImageDTO.Response image = imageService.uploadImage("main/", file);
                 mainPost.getImages().add(image.getStoredImageName());
             }
         }
-        mainPostRepository.save(mainPost);
+        mainPostRepository.saveAndFlush(mainPost);
         if(mainPost.getImages() != null) {
             mainPost.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
         }

@@ -60,12 +60,12 @@ public class BoardPostDTO {
             this.author = boardPost.getAuthor().getEmail();
             this.nickname = boardPost.getAuthor().getNickname();
             this.context = boardPost.getContext();
-            if(boardPost.getComments() == null) {
+            if (boardPost.getComments() == null) {
                 this.comments = new ArrayList<>();
             } else {
                 this.comments = boardPost.getComments().stream().map(CommentDTO.Response::new).collect(Collectors.toList());
             }
-            if(boardPost.getImages() == null) {
+            if (boardPost.getImages() == null) {
                 this.images = new ArrayList<>();
             } else {
                 this.images = boardPost.getImages();

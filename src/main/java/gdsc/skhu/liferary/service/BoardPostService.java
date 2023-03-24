@@ -32,7 +32,6 @@ public class BoardPostService {
     private final ImageService imageService;
 
     // Create
-    @Transactional
     public BoardPostDTO.Response save(String username, BoardPostDTO.Request request) throws IOException {
         BoardPost boardPost = BoardPost.builder()
                 .mainPost(mainPostRepository.findById(request.getMainPostId())
@@ -50,37 +49,69 @@ public class BoardPostService {
     //Read
     @Transactional(readOnly = true)
     public Page<BoardPostDTO.Response> findAll(Pageable pageable) {
-        return boardPostRepository.findAll(pageable).map(BoardPostDTO.Response::new);
+        return boardPostRepository.findAll(pageable).map(boardPost -> {
+            if(boardPost.getImages() != null) {
+                boardPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return boardPost;
+        }).map(BoardPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
     public Page<BoardPostDTO.Response> findByMainPost(Pageable pageable, Long mainPostId) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
-        return boardPostRepository.findByMainPost(pageable, mainPost)
-                .map(BoardPostDTO.Response::new);
+        return boardPostRepository.findByMainPost(pageable, mainPost).map(boardPost -> {
+            if(boardPost.getImages() != null) {
+                boardPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return boardPost;
+        }).map(BoardPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
     public BoardPostDTO.Response findById(Long mainPostId, Long id) {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
-        return new BoardPostDTO.Response(boardPostRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("There is no Board post with this ID")));
+        return new BoardPostDTO.Response(boardPostRepository.findById(id).map(boardPost -> {
+            if(boardPost.getImages() != null) {
+                boardPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return boardPost;
+        }).orElseThrow(() -> new NoSuchElementException("There is no Board post with this ID")));
     }
 
     @Transactional(readOnly = true)
     public Page<BoardPostDTO.Response> findByMember(Pageable pageable, String username) {
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new NoSuchElementException("Member not found"));
-        return boardPostRepository.findByAuthor(pageable, member)
-                .map(BoardPostDTO.Response::new);
+        return boardPostRepository.findByAuthor(pageable, member).map(boardPost -> {
+            if(boardPost.getImages() != null) {
+                boardPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return boardPost;
+        }).map(BoardPostDTO.Response::new);
     }
 
     @Transactional(readOnly = true)
     public Page<BoardPostDTO.Response> findByMainPostAndKeyword(Pageable pageable, Long mainPostId, String keyword) {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
-        return boardPostRepository.findByKeyword(pageable, mainPost, keyword);
+        return boardPostRepository.findByKeyword(pageable, mainPost, keyword).map(boardPost -> {
+            if(boardPost.getImages() != null) {
+                boardPost.getImages().replaceAll(
+                        storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
+                );
+            }
+            return boardPost;
+        });
     }
 
     // Update
@@ -133,7 +164,7 @@ public class BoardPostService {
                 boardPost.getImages().add(image.getStoredImageName());
             }
         }
-        boardPostRepository.save(boardPost);
+        boardPostRepository.saveAndFlush(boardPost);
         if(boardPost.getImages() != null) {
             boardPost.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
         }
