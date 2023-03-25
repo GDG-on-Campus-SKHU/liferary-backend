@@ -3,13 +3,16 @@ package gdsc.skhu.liferary.domain.DTO;
 import gdsc.skhu.liferary.domain.Image;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class ImageDTO {
     @Getter
     @Setter
-    @Schema(name = "ImageDTO.Board")
+    @Schema(name = "ImageDTO.Response")
     public static class Response {
-        @Schema(description = "BoardPost ID")
+        @Schema(description = "Image ID")
         private Long id;
         @Schema(description = "Original image name")
         private String originalImageName;
@@ -27,5 +30,28 @@ public class ImageDTO {
             this.imagePath = image.getImagePath();
             this.imageSize = image.getImageSize();
         }
+    }
+
+    @Getter
+    @Setter
+    @Schema(name = "ImageDTO.Result")
+    public static class Result {
+        @Schema(description = "Image file path")
+        private List<String> imagePath;
+
+        public Result(List<String> paths) {
+            this.imagePath = paths;
+        }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "Image.Delete")
+    public static class Delete {
+        @Schema(description = "Image file path")
+        private String imagePath;
     }
 }

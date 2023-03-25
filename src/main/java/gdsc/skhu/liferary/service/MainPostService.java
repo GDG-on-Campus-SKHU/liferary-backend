@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
@@ -154,10 +153,10 @@ public class MainPostService {
     }
 
     // Util
-    private void saveWithImage(MainPost mainPost, List<MultipartFile> images) throws IOException {
-        if (images != null) {
-            for (MultipartFile file : images) {
-                ImageDTO.Response image = imageService.uploadImage("main/", file);
+    private void saveWithImage(MainPost mainPost, List<String> images) {
+        if(images != null) {
+            for (String imagePath : images) {
+                ImageDTO.Response image = imageService.findByImagePath(imagePath);
                 mainPost.getImages().add(image.getStoredImageName());
             }
         }

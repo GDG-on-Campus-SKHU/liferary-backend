@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,9 +31,9 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/new")
     public ResponseEntity<BoardPostDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails,
-                                                      @ModelAttribute BoardPostDTO.Request boardPostDTO) throws IOException {
+                                                      @RequestBody BoardPostDTO.Request boardPostDTO) throws IOException {
         return ResponseEntity.ok(boardPostService.save(userDetails.getUsername(), boardPostDTO));
     }
 
@@ -104,16 +103,16 @@ public class BoardPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/{mainPostId}/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{mainPostId}/post")
     public ResponseEntity<BoardPostDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
-                                                        @ModelAttribute BoardPostDTO.Update update,
+                                                        @RequestBody BoardPostDTO.Update update,
                                                         @PathVariable(name = "mainPostId") Long mainPostId,
                                                         @RequestParam(name = "id") Long id) throws IOException {
         return ResponseEntity.ok(boardPostService.update(userDetails.getUsername(), update, mainPostId, id));
     }
 
     // Delete
-    @Operation(summary = "Delete main post", description = "Delete main post")
+    @Operation(summary = "Delete board post", description = "Delete board post")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")

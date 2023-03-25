@@ -32,9 +32,9 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/new")
     public ResponseEntity<MainPostDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails,
-                                                     @ModelAttribute MainPostDTO.Request request) throws IOException {
+                                                     @RequestBody MainPostDTO.Request request) throws IOException {
         return ResponseEntity.ok(mainPostService.save(userDetails.getUsername(), request));
     }
 
@@ -102,9 +102,9 @@ public class MainPostController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/post")
     public ResponseEntity<MainPostDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
-                                                       @ModelAttribute MainPostDTO.Update update,
+                                                       @RequestBody MainPostDTO.Update update,
                                                        @RequestParam("id") Long id) throws IOException {
         return ResponseEntity.ok(mainPostService.update(userDetails.getUsername(), update, id));
     }

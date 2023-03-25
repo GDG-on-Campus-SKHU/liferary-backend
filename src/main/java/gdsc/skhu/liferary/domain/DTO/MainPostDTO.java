@@ -5,7 +5,6 @@ import com.querydsl.core.annotations.QueryProjection;
 import gdsc.skhu.liferary.domain.MainPost;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,8 +24,8 @@ public class MainPostDTO {
         private String category;
         @Schema(description = "Context", defaultValue = "Test Context")
         private String context;
-        @Schema(description = "Image files", defaultValue = "")
-        private List<MultipartFile> images;
+        @Schema(description = "Input paths that returned by Image API", defaultValue = "")
+        private List<String> images;
         @Schema(description = "Video URL", defaultValue = "https://www.youtube.com")
         private String video;
     }
@@ -85,7 +84,7 @@ public class MainPostDTO {
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
-        private List<MultipartFile> images;
+        private List<String> images;
         @Schema(description = "Video URL", defaultValue = "https://www.youtube.com")
         private String video;
     }

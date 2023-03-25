@@ -32,9 +32,9 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/new")
     public ResponseEntity<StudyDTO.Response> save(@AuthenticationPrincipal UserDetails userDetails,
-                                                  @ModelAttribute StudyDTO.Request request) throws IOException {
+                                                  @RequestBody StudyDTO.Request request) throws IOException {
         return ResponseEntity.ok(studyService.save(userDetails.getUsername(), request));
     }
 
@@ -78,9 +78,9 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
     })
-    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping
     public ResponseEntity<StudyDTO.Response> update(@AuthenticationPrincipal UserDetails userDetails,
-                                                    @ModelAttribute StudyDTO.Update update,
+                                                    @RequestBody StudyDTO.Update update,
                                                     @RequestParam("mainPost") Long mainPostId) throws IOException {
         return ResponseEntity.ok(studyService.update(userDetails.getUsername(), update, mainPostId));
     }

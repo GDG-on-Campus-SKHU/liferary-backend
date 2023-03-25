@@ -61,7 +61,7 @@ public class CommentController {
     }
 
     // Update
-    @Operation(summary = "Update board post", description = "Update board post")
+    @Operation(summary = "Update comment", description = "Update comment")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad Request")
