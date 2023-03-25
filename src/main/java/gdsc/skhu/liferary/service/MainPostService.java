@@ -138,8 +138,8 @@ public class MainPostService {
             MainPost mainPost = mainPostRepository.findById(id)
                     .orElseThrow(() -> new NoSuchElementException("Main post not found"));
             if(mainPost.getImages() != null) {
-                for(String path : mainPost.getImages()) {
-                    imageService.deleteImage(path);
+                for(String imageName : mainPost.getImages()) {
+                    imageService.deleteImage("main/", imageName);
                 }
             }
             mainPostRepository.deleteById(id);

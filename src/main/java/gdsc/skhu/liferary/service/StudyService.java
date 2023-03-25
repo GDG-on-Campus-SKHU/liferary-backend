@@ -125,8 +125,8 @@ public class StudyService {
                 .orElseThrow(() -> new NoSuchElementException("Study not found"));
         try {
             if(study.getImages() != null) {
-                for(String path : study.getImages()) {
-                    imageService.deleteImage(path);
+                for(String imageName : study.getImages()) {
+                    imageService.deleteImage("path/", imageName);
                 }
             }
             studyRepository.delete(study);

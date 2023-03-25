@@ -2,6 +2,8 @@ package gdsc.skhu.liferary.service;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,9 +25,7 @@ public class FirebaseService {
                 mediaLink.substring(mediaLink.lastIndexOf("/b/") + 1);
     }
 
-    public void deleteFromFirebase(String path) {
-        if(firebaseBucket.get(path).exists()) {
-            firebaseBucket.get(path).delete();
-        }
+    public void deleteFromFirebase(String path, String fileName) {
+        firebaseBucket.get(path + fileName).delete();
     }
 }
