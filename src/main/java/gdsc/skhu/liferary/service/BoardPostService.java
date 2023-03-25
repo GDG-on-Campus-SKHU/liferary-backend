@@ -145,8 +145,8 @@ public class BoardPostService {
             BoardPost boardPost = boardPostRepository.findById(id)
                     .orElseThrow(() -> new NoSuchElementException("Board post not found"));
             if(boardPost.getImages() != null) {
-                for(String path : boardPost.getImages()) {
-                    imageService.deleteImage(path);
+                for(String imageName : boardPost.getImages()) {
+                    imageService.deleteImage("board/", imageName);
                 }
             }
             boardPostRepository.deleteById(id);

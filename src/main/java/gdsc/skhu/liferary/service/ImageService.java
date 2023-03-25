@@ -45,10 +45,10 @@ public class ImageService {
     }
 
     @Transactional
-    public void deleteImage(String imagePath) {
-        Image image = imageRepository.findByImagePath(imagePath)
+    public void deleteImage(String path, String imageName) {
+        Image image = imageRepository.findByStoredImageName(imageName)
                 .orElseThrow(() -> new NoSuchElementException("Image not found"));
-        firebaseService.deleteFromFirebase(imagePath);
+        firebaseService.deleteFromFirebase(path, image.getStoredImageName());
         imageRepository.delete(image);
     }
 }
