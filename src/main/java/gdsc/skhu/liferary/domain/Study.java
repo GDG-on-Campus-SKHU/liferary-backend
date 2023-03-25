@@ -33,7 +33,7 @@ public class Study extends BaseTime {
     @Column(name = "context", nullable = false)
     private String context;
 
-    @Column(name = "images")
+    @Column(name = "images", length = 2048)
     @Convert(converter = StringListConverter.class)
     private List<String> images;
 }

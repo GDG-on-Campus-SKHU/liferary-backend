@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class StudyService {
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
     private final ImageService imageService;
+    private final EntityManager entityManager;
 
     // Create
     public StudyDTO.Response save(String username, StudyDTO.Request request) throws IOException {
@@ -48,7 +50,7 @@ public class StudyService {
                 .images(new ArrayList<>())
                 .build();
         saveWithImage(study, request.getImages());
-        return new StudyDTO.Response(studyRepository.save(study));
+        return new StudyDTO.Response(study);
     }
 
     // Read
@@ -145,6 +147,7 @@ public class StudyService {
             }
         }
         studyRepository.saveAndFlush(study);
+        entityManager.detach(study);
         if(study.getImages() != null) {
             study.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
         }

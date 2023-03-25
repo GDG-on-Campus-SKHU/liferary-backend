@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class BoardPostService {
     private final BoardPostRepository boardPostRepository;
     private final MemberRepository memberRepository;
     private final ImageService imageService;
+    private final EntityManager entityManager;
 
     // Create
     public BoardPostDTO.Response save(String username, BoardPostDTO.Request request) throws IOException {
@@ -165,6 +167,7 @@ public class BoardPostService {
             }
         }
         boardPostRepository.saveAndFlush(boardPost);
+        entityManager.detach(boardPost);
         if(boardPost.getImages() != null) {
             boardPost.getImages().replaceAll(storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath());
         }

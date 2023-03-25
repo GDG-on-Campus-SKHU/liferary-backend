@@ -32,7 +32,7 @@ public class MainPost extends BaseTime {
     @Column(name = "context", nullable = false)
     private String context;
 
-    @Column(name = "images", length = 1024)
+    @Column(name = "images", length = 2048)
     @Convert(converter = StringListConverter.class)
     private List<String> images;
 

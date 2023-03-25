@@ -62,10 +62,9 @@ public class MainPostDTO {
             this.nickname = mainPost.getAuthor().getNickname();
             this.category = mainPost.getCategory().toString();
             this.context = mainPost.getContext();
-            if(mainPost.getImages() == null) {
-                this.images = new ArrayList<>();
-            } else {
-                this.images = mainPost.getImages();
+            this.images = new ArrayList<>();
+            if(mainPost.getImages() != null) {
+                images.addAll(mainPost.getImages());
             }
             this.video = mainPost.getVideo();
             this.modifiedDate = mainPost.getModifiedDate();

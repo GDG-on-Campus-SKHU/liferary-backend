@@ -60,15 +60,13 @@ public class BoardPostDTO {
             this.author = boardPost.getAuthor().getEmail();
             this.nickname = boardPost.getAuthor().getNickname();
             this.context = boardPost.getContext();
-            if (boardPost.getComments() == null) {
-                this.comments = new ArrayList<>();
-            } else {
+            this.comments = new ArrayList<>();
+            if (boardPost.getComments() != null) {
                 this.comments = boardPost.getComments().stream().map(CommentDTO.Response::new).collect(Collectors.toList());
             }
-            if (boardPost.getImages() == null) {
-                this.images = new ArrayList<>();
-            } else {
-                this.images = boardPost.getImages();
+            this.images = new ArrayList<>();
+            if (boardPost.getImages() != null) {
+                images.addAll(boardPost.getImages());
             }
             this.modifiedDate = boardPost.getModifiedDate();
         }
