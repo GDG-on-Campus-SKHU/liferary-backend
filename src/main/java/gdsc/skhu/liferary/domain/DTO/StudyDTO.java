@@ -24,7 +24,7 @@ public class StudyDTO {
         @Schema(description = "Context", defaultValue = "Test study Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
-        private List<MultipartFile> images;
+        private List<String> images;
     }
 
     @Getter
@@ -74,6 +74,6 @@ public class StudyDTO {
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
-        private List<MultipartFile> images;
+        private List<String> images;
     }
 }

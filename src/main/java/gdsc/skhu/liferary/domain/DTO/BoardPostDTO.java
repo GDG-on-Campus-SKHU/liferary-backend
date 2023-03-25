@@ -26,7 +26,7 @@ public class BoardPostDTO {
         @Schema(description = "Context", defaultValue = "Test Board Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
-        private List<MultipartFile> images;
+        private List<String> images;
     }
 
     @Getter
@@ -84,6 +84,6 @@ public class BoardPostDTO {
         @Schema(description = "Context", defaultValue = "Modified Context")
         private String context;
         @Schema(description = "Image files", defaultValue = "")
-        private List<MultipartFile> images;
+        private List<String> images;
     }
 }
