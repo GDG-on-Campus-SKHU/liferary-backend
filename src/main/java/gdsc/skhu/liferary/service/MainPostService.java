@@ -3,6 +3,7 @@ package gdsc.skhu.liferary.service;
 import gdsc.skhu.liferary.domain.Category;
 import gdsc.skhu.liferary.domain.DTO.ImageDTO;
 import gdsc.skhu.liferary.domain.DTO.MainPostDTO;
+import gdsc.skhu.liferary.domain.Image;
 import gdsc.skhu.liferary.domain.MainPost;
 import gdsc.skhu.liferary.domain.Member;
 import gdsc.skhu.liferary.repository.mainpost.MainPostRepository;
@@ -139,7 +140,8 @@ public class MainPostService {
                     .orElseThrow(() -> new NoSuchElementException("Main post not found"));
             if(mainPost.getImages() != null) {
                 for(String imageName : mainPost.getImages()) {
-                    imageService.deleteImage("main/", imageName);
+                    ImageDTO.Response image = imageService.findByStoredImageName(imageName);
+                    imageService.deleteImage("main/", image.getImagePath());
                 }
             }
             mainPostRepository.deleteById(id);

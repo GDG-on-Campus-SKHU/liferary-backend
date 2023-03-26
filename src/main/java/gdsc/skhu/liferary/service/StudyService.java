@@ -125,7 +125,8 @@ public class StudyService {
         try {
             if(study.getImages() != null) {
                 for(String imageName : study.getImages()) {
-                    imageService.deleteImage("path/", imageName);
+                    ImageDTO.Response image = imageService.findByStoredImageName(imageName);
+                    imageService.deleteImage("path/", image.getImagePath());
                 }
             }
             studyRepository.delete(study);
