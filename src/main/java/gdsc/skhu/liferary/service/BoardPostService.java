@@ -116,7 +116,6 @@ public class BoardPostService {
     }
 
     // Update
-    @Transactional
     public BoardPostDTO.Response update(String username, BoardPostDTO.Update update, Long mainPostId, Long id) throws IOException {
         mainPostRepository.findById(mainPostId).orElseThrow(() -> new NoSuchElementException("Main post not found"));
         BoardPost oldBoardPost = boardPostRepository.findById(id)

@@ -61,7 +61,6 @@ public class MainPostService {
     @Transactional(readOnly = true)
     public MainPostDTO.Response findById(Long id) {
         return new MainPostDTO.Response(mainPostRepository.findById(id).map(mainPost -> {
-            System.out.println();
             if(mainPost.getImages() != null) {
                 mainPost.getImages().replaceAll(
                         storedImageName -> imageService.findByStoredImageName(storedImageName).getImagePath()
@@ -111,7 +110,6 @@ public class MainPostService {
     }
 
     // Update
-    @Transactional
     public MainPostDTO.Response update(String username, MainPostDTO.Update update, Long id) throws IOException {
         MainPost oldMainPost = mainPostRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("There is no Main Post with this ID"));

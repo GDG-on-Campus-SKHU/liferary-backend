@@ -30,7 +30,7 @@ public class ImageController {
     })
     @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ImageDTO.Result> save(@RequestParam("path") String path,
-                                             @RequestPart("images") List<MultipartFile> images) throws IOException {
+                                                @RequestPart("images") List<MultipartFile> images) throws IOException {
         return ResponseEntity.ok(imageService.uploadImage(path + "/", images));
     }
 

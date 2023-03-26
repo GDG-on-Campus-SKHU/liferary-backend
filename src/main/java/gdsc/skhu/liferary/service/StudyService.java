@@ -93,7 +93,6 @@ public class StudyService {
     }
 
     // Update
-    @Transactional
     public StudyDTO.Response update(String username, StudyDTO.Update update, Long mainPostId) throws IOException {
         MainPost mainPost = mainPostRepository.findById(mainPostId)
                 .orElseThrow(() -> new NoSuchElementException("Main post not found"));
