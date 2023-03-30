@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -29,7 +30,8 @@ public class MainPost extends BaseTime {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Column(name = "context", length = 262144, nullable = false)
+    @Size(max = 65534)
+    @Column(name = "context", nullable = false)
     private String context;
 
     @Column(name = "images", length = 2048)
