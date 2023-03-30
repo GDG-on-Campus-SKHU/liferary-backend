@@ -31,8 +31,8 @@ public class BoardPost extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member author;
 
-    @Size(max = 65534)
-    @Column(name = "context", nullable = false)
+    @Size(min = 1, max = 65534)
+    @Column(name = "context", columnDefinition = "TEXT", nullable = false)
     private String context;
 
     @OneToMany(mappedBy = "boardPost", orphanRemoval = true)
