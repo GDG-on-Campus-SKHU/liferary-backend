@@ -10,6 +10,13 @@ It means a library with knowledges for a better life.
 <br/>
 
 ## Sustainable Development Goals
+![goals](https://user-images.githubusercontent.com/14046092/228918938-da18180b-5a4f-46bd-b75b-1a9cd4c33e98.png)
+* Goal 3 : Good Health and Well-Being
+  * "Knowledge sharers" can share their excellent knowledge on topics such as how to purify water, take medication correctly, and exercise safely in Liferary. By doing so, they can help more people live healthier and better lives.
+* Goal 4 : Quality Education
+  * Our ultimate goal for the service is to create an environment where shared knowledge leads to high-quality learning. To achieve this, we are planning to establish procedures to certify knowledge sharers as experts in their knowledge and attract more professional knowledge sharers. For now, our service is providing an environment where people can share their unique knowledge, learn together in real-time, and communicate with each other about knowledge for better learning.
+* Goal 10 : Reduced Inequalities
+  * For some, even the most mundane information may be unfamiliar and difficult on the opposite side of the world. Educational disparities lead to global inequality, and to solve this, we must provide equal learning opportunities to everyone. We aim to provide an environment where anyone with Internet access can learn completely for free.
 <br/>
 
 ## Project Repositories
