@@ -31,8 +31,8 @@ public class Study extends BaseTime {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Size(max = 65534)
-    @Column(name = "context", nullable = false)
+    @Size(min = 1, max = 65534)
+    @Column(name = "context", columnDefinition = "TEXT", nullable = false)
     private String context;
 
     @Column(name = "images", length = 2048)
