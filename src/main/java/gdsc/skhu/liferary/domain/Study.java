@@ -30,7 +30,7 @@ public class Study extends BaseTime {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "context", nullable = false)
+    @Column(name = "context", length = 131072, nullable = false)
     private String context;
 
     @Column(name = "images", length = 2048)

@@ -29,7 +29,7 @@ public class MainPost extends BaseTime {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Column(name = "context", nullable = false)
+    @Column(name = "context", length = 262144, nullable = false)
     private String context;
 
     @Column(name = "images", length = 2048)
