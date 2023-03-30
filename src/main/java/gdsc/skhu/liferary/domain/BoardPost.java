@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,8 @@ public class BoardPost extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member author;
 
-    @Column(name = "context", length = 131072, nullable = false)
+    @Size(max = 65534)
+    @Column(name = "context", nullable = false)
     private String context;
 
     @OneToMany(mappedBy = "boardPost", orphanRemoval = true)
