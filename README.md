@@ -51,6 +51,7 @@ We seperate repositories to prevent unexpected side effects in each other's code
 <br/>
 
 ## How to use Liferary
+### Web
 ### 1. First, access the service through the provided [link](https://liferary-frontend.vercel.app/).
 ![Main](https://user-images.githubusercontent.com/14046092/229236590-a5aaf0ca-cb93-4f7c-9595-3fa0ed09cb1d.png)
 ![MainRecent](https://user-images.githubusercontent.com/14046092/229236596-0d15c908-14f4-40df-9d81-0e4f2158f56b.png)
@@ -96,7 +97,32 @@ Also, you can check knowledge share posts by category, based on your interests.
 ### 8. In My Page, you can see your account's information and posts that you wrote.
 
 ![MyPage](https://user-images.githubusercontent.com/14046092/229236598-57e73388-5a17-447b-9856-17659db03dd3.png)
-<br/>
+<br/>  
+
+### App
+#### Liferary Flutter app has not been deployed yet because the technical implementation has not been completed. But you can follow the instructions below to try out the app in your local environment up to the completed part.
+
+### 1. If you use Android device.
+You need to have Android SDK version 31 or later installed. After launching Android Studio, enter the following commands sequentially in the terminal window.
+```dart
+flutter pub get
+flutter doctor -v
+flutter run
+```
+
+### 2. If you use iOS device.
+You need to have iOS version 11 or later installed. After launching iOS simulator, enther the following commands sequentially in the terminal window.
+```dart
+flutter pub get
+flutter doctor -v
+flutter 
+```
+
+* If you encounter the 'Error running pod install' error during iOS build, follow the steps below:
+1. Open a terminal window for your project and enter `cd ios` to move to the iOS folder.
+2. Enter `pod repo update` to update the repositories.
+3. Enter `pod install` to install the pod files again.
+<br/>  
 
 ## Next Steps
 * Implementing a certification process for knowledge providers' expertise.
