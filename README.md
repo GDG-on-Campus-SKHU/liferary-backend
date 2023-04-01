@@ -103,7 +103,7 @@ Also, you can check knowledge share posts by category, based on your interests.
 #### Liferary Flutter app has not been deployed yet because the technical implementation has not been completed. But you can follow the instructions below to try out the app in your local environment up to the completed part after clone this repository. [App Repository](https://github.com/GDSC-SKHU/liferary-mobile)
 
 ### 1. If you use Android device.
-You need to have Android SDK version 31 or later installed. After launching Android Studio, enter the following commands sequentially in the terminal window.
+Android minSDK version should be 19 or later installed. Android NDK should also be version 25.1.8937393 or later installed. After launching Android Studio, enter the following commands sequentially in the terminal window.
 ```dart
 flutter pub get
 flutter doctor -v
