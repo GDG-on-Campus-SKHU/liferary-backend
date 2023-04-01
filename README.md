@@ -100,7 +100,7 @@ Also, you can check knowledge share posts by category, based on your interests.
 <br/>  
 
 ### App
-#### Liferary Flutter app has not been deployed yet because the technical implementation has not been completed. But you can follow the instructions below to try out the app in your local environment up to the completed part.
+#### Liferary Flutter app has not been deployed yet because the technical implementation has not been completed. But you can follow the instructions below to try out the app in your local environment up to the completed part after clone this repository. [App Repository](https://github.com/GDSC-SKHU/liferary-mobile)
 
 ### 1. If you use Android device.
 You need to have Android SDK version 31 or later installed. After launching Android Studio, enter the following commands sequentially in the terminal window.
@@ -115,7 +115,7 @@ You need to have iOS version 11 or later installed. After launching iOS simulato
 ```dart
 flutter pub get
 flutter doctor -v
-flutter 
+flutter run
 ```
 
 * If you encounter the 'Error running pod install' error during iOS build, follow the steps below:
