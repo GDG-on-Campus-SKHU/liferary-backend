@@ -41,7 +41,7 @@ We seperate repositories to prevent unexpected side effects in each other's code
   * Redis
   * Docker
   * Swagger
-    * [Liferary API](http://api-liferary.duckdns.org/swagger-ui/index.html/)
+    * [Liferary API](http://api-liferary.duckdns.org/swagger-ui/index.html)
   * **Google Cloud Platform**
   * **Firebase**
 <br/>
